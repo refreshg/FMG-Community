@@ -83,9 +83,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="@string/default_user_name"
                             android:textColor="#AAAAAA"
-                            android:textSize="13sp" />
+                            android:textSize="13sp"
+                            android:visibility="gone" />
                     </LinearLayout>
 
                     <ImageView
@@ -238,75 +238,5 @@
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="16dp">
-
-            <ImageButton
-                android:id="@+id/menu_social_youtube"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="YouTube"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_social_youtube" />
-
-            <ImageButton
-                android:id="@+id/menu_social_facebook"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Facebook"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_social_facebook" />
-
-            <ImageButton
-                android:id="@+id/menu_social_linkedin"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="LinkedIn"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_social_linkedin" />
-
-            <ImageButton
-                android:id="@+id/menu_social_instagram"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Instagram"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_social_instagram" />
-
-            <ImageButton
-                android:id="@+id/menu_social_tiktok"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="TikTok"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_social_tiktok" />
-
-            <ImageButton
-                android:id="@+id/menu_social_website"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Website"
-                android:padding="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_social_website" />
-        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

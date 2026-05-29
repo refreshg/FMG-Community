@@ -568,19 +568,6 @@ public class MainActivity extends AppCompatActivity {
             });
 
     findViewById(R.id.menu_item_logout).setOnClickListener(v -> logout());
-
-    findViewById(R.id.menu_social_youtube)
-        .setOnClickListener(v -> openExternal("https://www.youtube.com/"));
-    findViewById(R.id.menu_social_facebook)
-        .setOnClickListener(v -> openExternal("https://www.facebook.com/"));
-    findViewById(R.id.menu_social_linkedin)
-        .setOnClickListener(v -> openExternal("https://www.linkedin.com/"));
-    findViewById(R.id.menu_social_instagram)
-        .setOnClickListener(v -> openExternal("https://www.instagram.com/"));
-    findViewById(R.id.menu_social_tiktok)
-        .setOnClickListener(v -> openExternal("https://www.tiktok.com/"));
-    findViewById(R.id.menu_social_website)
-        .setOnClickListener(v -> openExternal("https://fmg.ge/"));
   }
 
   private void bindMenuRow(View row, int iconRes, int labelRes) {
@@ -656,12 +643,27 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void refreshMenuProfileName() {
-    String displayName =
-        cachedUserDisplayName != null && !cachedUserDisplayName.isEmpty()
-            ? cachedUserDisplayName
-            : getString(R.string.default_user_name);
-    menuProfileSubname.setText(displayName);
+    applyMenuProfileSubname(cachedUserDisplayName);
     fetchProfileDisplayName();
+  }
+
+  private void applyMenuProfileSubname(String name) {
+    if (menuProfileSubname == null) return;
+    if (isValidDisplayName(name)) {
+      menuProfileSubname.setText(name.trim());
+      menuProfileSubname.setVisibility(View.VISIBLE);
+    } else {
+      menuProfileSubname.setText("");
+      menuProfileSubname.setVisibility(View.GONE);
+    }
+  }
+
+  private static boolean isValidDisplayName(String name) {
+    if (name == null) return false;
+    String s = name.trim();
+    if (s.isEmpty()) return false;
+    if ("{}".equals(s) || "[]".equals(s)) return false;
+    return !"null".equalsIgnoreCase(s) && !"undefined".equalsIgnoreCase(s);
   }
 
   private void setupBackNavigation() {
@@ -704,10 +706,10 @@ public class MainActivity extends AppCompatActivity {
         js,
         value -> {
           String name = parseJsString(value);
-          if (name != null && !name.isEmpty()) {
+          if (isValidDisplayName(name)) {
             cachedUserDisplayName = name;
-            if (menuOpen && menuProfileSubname != null) {
-              menuProfileSubname.setText(name);
+            if (menuOpen) {
+              runOnUiThread(() -> applyMenuProfileSubname(name));
             }
           }
         });
@@ -715,22 +717,6 @@ public class MainActivity extends AppCompatActivity {
 
   private void fetchProfileDisplayName() {
     updateCachedUserNameFromSession();
-    String fetchJs =
-        "(function(){try{return fetch('/web/session/get_session_info',{method:'POST',"
-            + "headers:{'Content-Type':'application/json'},body:'{}',credentials:'same-origin'})"
-            + ".then(function(r){return r.json();}).then(function(d){"
-            + "var x=d.result||d;return x.name||x.partner_display_name||x.username||'';})"
-            + ".catch(function(){return '';});}catch(e){return Promise.resolve('');}})()";
-    webView.evaluateJavascript(
-        fetchJs,
-        value -> {
-          // Promise result may arrive as quoted string on newer WebViews
-          String name = parseJsString(value);
-          if (name != null && !name.isEmpty()) {
-            cachedUserDisplayName = name;
-            runOnUiThread(() -> menuProfileSubname.setText(name));
-          }
-        });
   }
 
   private static String parseJsString(String raw) {
@@ -742,7 +728,7 @@ public class MainActivity extends AppCompatActivity {
       s = s.substring(1, s.length() - 1);
       s = s.replace("\\\"", "\"").replace("\\\\", "\\");
     }
-    return s.isEmpty() ? null : s;
+    return isValidDisplayName(s) ? s.trim() : null;
   }
 
   private void showLogin() {
@@ -792,10 +778,6 @@ public class MainActivity extends AppCompatActivity {
               CookieManager.getInstance().flush();
               runOnUiThread(this::showOnboarding);
             });
-  }
-
-  private void openExternal(String url) {
-    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
   }
 
   private void hideKeyboard(View view) {
