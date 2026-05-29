@@ -1,6 +1,9 @@
 package ge.fmg.community;
 
+import android.Manifest;
+import android.content.ClipData;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -26,6 +29,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
@@ -91,8 +95,10 @@ public class MainActivity extends AppCompatActivity {
   private boolean loggingOut;
   private ValueCallback<Uri[]> filePathCallback;
   private Uri cameraPhotoUri;
+  private WebChromeClient.FileChooserParams pendingFileChooserParams;
 
   private ActivityResultLauncher<Intent> fileChooserLauncher;
+  private ActivityResultLauncher<String> cameraPermissionLauncher;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -108,30 +114,37 @@ public class MainActivity extends AppCompatActivity {
     prefs = new AppPrefs(this);
     odooBase = prefs.getServer();
 
+    cameraPermissionLauncher =
+        registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            granted -> {
+              WebChromeClient.FileChooserParams pending = pendingFileChooserParams;
+              pendingFileChooserParams = null;
+              if (pending != null) {
+                launchFileChooserIntent(pending, granted);
+              }
+            });
+
     fileChooserLauncher =
         registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
               Uri[] results = null;
-              if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+              if (result.getResultCode() == RESULT_OK) {
                 Intent data = result.getData();
-                if (data.getClipData() != null) {
+                if (data != null && data.getClipData() != null) {
                   int count = data.getClipData().getItemCount();
                   results = new Uri[count];
                   for (int i = 0; i < count; i++) {
                     results[i] = data.getClipData().getItemAt(i).getUri();
                   }
-                } else if (data.getData() != null) {
+                } else if (data != null && data.getData() != null) {
                   results = new Uri[] {data.getData()};
+                } else if (isCapturedPhotoValid(cameraPhotoUri)) {
+                  results = new Uri[] {cameraPhotoUri};
                 }
-              } else if (result.getResultCode() == RESULT_OK && cameraPhotoUri != null) {
-                results = new Uri[] {cameraPhotoUri};
               }
-              if (filePathCallback != null) {
-                filePathCallback.onReceiveValue(results);
-                filePathCallback = null;
-              }
-              cameraPhotoUri = null;
+              deliverFileChooserResult(results);
             });
 
     bindViews();
@@ -251,6 +264,18 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void openFileChooser(WebChromeClient.FileChooserParams params) {
+    if (!hasCameraPermission()) {
+      pendingFileChooserParams = params;
+      cameraPermissionLauncher.launch(Manifest.permission.CAMERA);
+      return;
+    }
+    launchFileChooserIntent(params, true);
+  }
+
+  private void launchFileChooserIntent(
+      WebChromeClient.FileChooserParams params, boolean includeCamera) {
+    cameraPhotoUri = null;
+
     Intent pickIntent = new Intent(Intent.ACTION_GET_CONTENT);
     pickIntent.addCategory(Intent.CATEGORY_OPENABLE);
     pickIntent.setType("*/*");
@@ -264,17 +289,9 @@ public class MainActivity extends AppCompatActivity {
         Intent.EXTRA_ALLOW_MULTIPLE,
         params != null && params.getMode() == WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE);
 
-    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    if (cameraIntent.resolveActivity(getPackageManager()) != null) {
-      try {
-        File photoFile = createImageFile();
-        cameraPhotoUri =
-            FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", photoFile);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPhotoUri);
-      } catch (IOException e) {
-        cameraIntent = null;
-        cameraPhotoUri = null;
-      }
+    Intent cameraIntent = null;
+    if (includeCamera && hasCameraPermission()) {
+      cameraIntent = buildCameraCaptureIntent();
     }
 
     Intent chooser = Intent.createChooser(pickIntent, "აირჩიე ფაილი");
@@ -282,6 +299,60 @@ public class MainActivity extends AppCompatActivity {
       chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {cameraIntent});
     }
     fileChooserLauncher.launch(chooser);
+  }
+
+  private Intent buildCameraCaptureIntent() {
+    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    if (cameraIntent.resolveActivity(getPackageManager()) == null) {
+      return null;
+    }
+    try {
+      File photoFile = createImageFile();
+      String authority = getPackageName() + ".fileprovider";
+      cameraPhotoUri = FileProvider.getUriForFile(this, authority, photoFile);
+
+      cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPhotoUri);
+      cameraIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+      cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      cameraIntent.setClipData(ClipData.newUri(getContentResolver(), "capture", cameraPhotoUri));
+
+      for (android.content.pm.ResolveInfo info :
+          getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY)) {
+        String pkg = info.activityInfo.packageName;
+        grantUriPermission(
+            pkg,
+            cameraPhotoUri,
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      }
+      return cameraIntent;
+    } catch (IOException e) {
+      cameraPhotoUri = null;
+      return null;
+    }
+  }
+
+  private boolean hasCameraPermission() {
+    return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        == PackageManager.PERMISSION_GRANTED;
+  }
+
+  private boolean isCapturedPhotoValid(Uri uri) {
+    if (uri == null) {
+      return false;
+    }
+    try (java.io.InputStream in = getContentResolver().openInputStream(uri)) {
+      return in != null && in.read() != -1;
+    } catch (IOException e) {
+      return false;
+    }
+  }
+
+  private void deliverFileChooserResult(Uri[] results) {
+    if (filePathCallback != null) {
+      filePathCallback.onReceiveValue(results);
+      filePathCallback = null;
+    }
+    cameraPhotoUri = null;
   }
 
   private File createImageFile() throws IOException {
