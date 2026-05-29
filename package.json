@@ -5,7 +5,8 @@
   "scripts": {
     "sync": "npx cap sync",
     "open:android": "npx cap open android",
-    "assets": "npx capacitor-assets generate --android"
+    "assets": "powershell -ExecutionPolicy Bypass -File scripts/generate-android-assets.ps1",
+    "assets:cap": "npx capacitor-assets generate --android"
   },
   "dependencies": {
     "@capacitor/android": "^6.1.0",

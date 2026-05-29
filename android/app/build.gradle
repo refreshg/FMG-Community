@@ -46,6 +46,17 @@ android {
     }
 }
 
+def legalSrcDir = file("${projectDir}/../../www/legal")
+def legalAssetsDir = file("${projectDir}/src/main/assets/legal")
+
+tasks.register("copyLegalAssets", Copy) {
+    from legalSrcDir
+    into legalAssetsDir
+    include "**/*"
+}
+
+preBuild.dependsOn copyLegalAssets
+
 repositories {
     flatDir{
         dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'

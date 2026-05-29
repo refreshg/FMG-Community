@@ -41,12 +41,20 @@ function odooUrl(path) {
   return base + path;
 }
 
-function openExternal(url) {
-  if (window.Capacitor?.Plugins?.Browser) {
-    window.Capacitor.Plugins.Browser.open({ url });
-  } else {
-    window.open(url, "_blank");
-  }
+/** Bundled legal HTML (www/legal/). Native Android loads these from assets via MainActivity. */
+const LEGAL = {
+  PRIVACY: "legal/privacy.html",
+  TERMS: "legal/terms.html",
+};
+
+/**
+ * Capacitor shell helper — native app uses showLegalPage in MainActivity instead.
+ * @param {"privacy"|"terms"} which
+ */
+function openLegalDocument(which) {
+  const path = which === "terms" ? LEGAL.TERMS : LEGAL.PRIVACY;
+  const url = new URL(path, window.location.href).href;
+  window.open(url, "_self");
 }
 
 window.addEventListener("DOMContentLoaded", () => {

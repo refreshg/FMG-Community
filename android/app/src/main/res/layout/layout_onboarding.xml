@@ -41,7 +41,7 @@
             android:id="@+id/onboarding_next"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:backgroundTint="@color/brand_purple"
+            android:backgroundTint="@color/brand_red"
             android:text="@string/onboarding_next"
             android:textAllCaps="false"
             android:textColor="@android:color/white"

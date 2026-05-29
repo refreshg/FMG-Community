@@ -12,7 +12,12 @@
     <string name="menu_news">სიახლეები</string>
     <string name="menu_offers">შეთავაზებები</string>
     <string name="menu_how_it_works">როგორ მუშაობს</string>
+    <string name="menu_privacy">კონფიდენციალურობის პოლიტიკა</string>
+    <string name="menu_terms">წესები და პირობები</string>
     <string name="menu_server">სერვერის ლინკი</string>
+    <string name="legal_close">დახურვა</string>
+    <string name="legal_privacy_title">კონფიდენციალურობის პოლიტიკა</string>
+    <string name="legal_terms_title">წესები და პირობები</string>
     <string name="menu_logout">გასვლა</string>
     <string name="menu_save">შენახვა</string>
     <string name="onboarding_skip">გამოტოვება</string>

@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -45,9 +46,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-  private static final int BRAND_PURPLE = Color.parseColor("#714b67");
-  private static final int NAV_INACTIVE = Color.parseColor("#bbbbbb");
-  private static final int NAV_ACTIVE = Color.parseColor("#ffffff");
+  private static final int NAV_INACTIVE = Color.parseColor("#888888");
+  private static final int NAV_ACTIVE = Color.parseColor("#E63946");
   private enum NavTab { HOME, TICKET, CREATE, OBJECTS, PROFILE }
 
   private AppPrefs prefs;
@@ -91,6 +91,12 @@ public class MainActivity extends AppCompatActivity {
   private EditText menuServerInput;
   private boolean menuOpen;
   private boolean menuAnimating;
+
+  private View legalOverlay;
+  private TextView legalTitle;
+  private View legalClose;
+  private WebView legalContentWebView;
+  private boolean legalOpen;
 
   private boolean loggingOut;
   private ValueCallback<Uri[]> filePathCallback;
@@ -154,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
     setupOnboarding();
     setupBottomNav();
     setupMenu();
+    setupLegalOverlay();
     setupBackNavigation();
 
     if (prefs.isOnboardingSeen()) {
@@ -191,12 +198,23 @@ public class MainActivity extends AppCompatActivity {
     navObjectsLabel = findViewById(R.id.nav_objects_label);
     navProfileLabel = findViewById(R.id.nav_profile_label);
 
-    menuOverlay = findViewById(R.id.menu_overlay);
-    menuBackdrop = findViewById(R.id.menu_backdrop);
-    menuPanel = findViewById(R.id.menu_panel);
-    menuProfileSubname = findViewById(R.id.menu_profile_subname);
-    menuServerEditor = findViewById(R.id.menu_server_editor);
-    menuServerInput = findViewById(R.id.menu_server_input);
+    View menuRoot = findViewById(R.id.menu_overlay);
+    menuOverlay = menuRoot;
+    if (menuRoot != null) {
+      menuBackdrop = menuRoot.findViewById(R.id.menu_backdrop);
+      menuPanel = menuRoot.findViewById(R.id.menu_panel);
+      menuProfileSubname = menuRoot.findViewById(R.id.menu_profile_subname);
+      menuServerEditor = menuRoot.findViewById(R.id.menu_server_editor);
+      menuServerInput = menuRoot.findViewById(R.id.menu_server_input);
+    }
+
+    View legalRoot = findViewById(R.id.legal_overlay);
+    legalOverlay = legalRoot;
+    if (legalRoot != null) {
+      legalTitle = legalRoot.findViewById(R.id.legal_title);
+      legalClose = legalRoot.findViewById(R.id.legal_close);
+      legalContentWebView = legalRoot.findViewById(R.id.legal_content_webview);
+    }
   }
 
   private void applyBottomNavInsets() {
@@ -430,6 +448,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showOnboarding() {
+    hideLegalPage();
     webView.stopLoading();
     onboardingPager.setCurrentItem(0, false);
     updateOnboardingUi(0);
@@ -484,6 +503,9 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void navigateTo(NavTab tab) {
+    if (legalOpen) {
+      hideLegalPage();
+    }
     if (tab == NavTab.PROFILE) {
       setActiveNavTab(NavTab.PROFILE);
       showMenu();
@@ -524,22 +546,36 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setupMenu() {
-    bindMenuRow(findViewById(R.id.menu_item_news), R.drawable.ic_menu_news, R.string.menu_news);
-    bindMenuRow(findViewById(R.id.menu_item_offers), R.drawable.ic_menu_gift, R.string.menu_offers);
+    View menuRoot = menuOverlay != null ? menuOverlay : findViewById(R.id.menu_overlay);
+    if (menuRoot == null) return;
+
+    bindMenuRow(menuRoot.findViewById(R.id.menu_item_news), R.drawable.ic_menu_news, R.string.menu_news);
+    bindMenuRow(menuRoot.findViewById(R.id.menu_item_offers), R.drawable.ic_menu_gift, R.string.menu_offers);
     bindMenuRow(
-        findViewById(R.id.menu_item_how_it_works), R.drawable.ic_menu_help, R.string.menu_how_it_works);
+        menuRoot.findViewById(R.id.menu_item_how_it_works),
+        R.drawable.ic_menu_help,
+        R.string.menu_how_it_works);
 
-    menuBackdrop.setOnClickListener(v -> hideMenu());
+    if (menuBackdrop != null) {
+      menuBackdrop.setOnClickListener(v -> hideMenu());
+    }
 
-    findViewById(R.id.menu_item_profile).setOnClickListener(v -> openMenuPath(NavUrls.PROFILE));
-    findViewById(R.id.menu_item_news)
+    menuRoot.findViewById(R.id.menu_item_profile).setOnClickListener(v -> openMenuPath(NavUrls.PROFILE));
+    menuRoot.findViewById(R.id.menu_item_news)
         .setOnClickListener(v -> openMenuPath(NavUrls.NOTIFICATIONS));
-    findViewById(R.id.menu_item_offers)
+    menuRoot.findViewById(R.id.menu_item_offers)
         .setOnClickListener(v -> openMenuPath(NavUrls.SUGGESTION));
-    findViewById(R.id.menu_item_how_it_works)
+    menuRoot.findViewById(R.id.menu_item_how_it_works)
         .setOnClickListener(v -> openMenuPath(NavUrls.HOW_IT_WORKS));
+    menuRoot
+        .findViewById(R.id.menu_item_privacy)
+        .setOnClickListener(
+            v -> showLegalPage(LegalDocuments.PRIVACY_HTML, R.string.legal_privacy_title));
+    menuRoot
+        .findViewById(R.id.menu_item_terms)
+        .setOnClickListener(v -> showLegalPage(LegalDocuments.TERMS_HTML, R.string.legal_terms_title));
 
-    findViewById(R.id.menu_item_server)
+    menuRoot.findViewById(R.id.menu_item_server)
         .setOnClickListener(
             v -> {
               boolean show = menuServerEditor.getVisibility() != View.VISIBLE;
@@ -550,7 +586,8 @@ public class MainActivity extends AppCompatActivity {
               }
             });
 
-    findViewById(R.id.menu_server_save_btn)
+    menuRoot
+        .findViewById(R.id.menu_server_save_btn)
         .setOnClickListener(
             v -> {
               String normalized = normalizeServer(menuServerInput.getText().toString());
@@ -567,7 +604,7 @@ public class MainActivity extends AppCompatActivity {
               reloadCurrentNavView();
             });
 
-    findViewById(R.id.menu_item_logout).setOnClickListener(v -> logout());
+    menuRoot.findViewById(R.id.menu_item_logout).setOnClickListener(v -> logout());
   }
 
   private void bindMenuRow(View row, int iconRes, int labelRes) {
@@ -583,6 +620,71 @@ public class MainActivity extends AppCompatActivity {
     loadOdooPath(path);
   }
 
+  private void setupLegalOverlay() {
+    if (legalContentWebView == null) return;
+
+    WebSettings settings = legalContentWebView.getSettings();
+    settings.setJavaScriptEnabled(false);
+    settings.setDomStorageEnabled(false);
+    settings.setAllowFileAccess(true);
+    settings.setAllowContentAccess(false);
+    settings.setBuiltInZoomControls(false);
+
+    legalContentWebView.setWebViewClient(
+        new WebViewClient() {
+          @Override
+          public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            return true;
+          }
+
+          @SuppressWarnings("deprecation")
+          @Override
+          public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            return true;
+          }
+        });
+
+    legalClose.setOnClickListener(v -> hideLegalPage());
+  }
+
+  private void showLegalPage(String assetPath, int titleResId) {
+    if (legalOverlay == null || legalContentWebView == null || legalTitle == null) {
+      Toast.makeText(this, "Legal page unavailable", Toast.LENGTH_SHORT).show();
+      return;
+    }
+    hideMenuImmediate();
+    legalTitle.setText(titleResId);
+    try {
+      getAssets().open(assetPath).close();
+    } catch (IOException e) {
+      Toast.makeText(this, "Legal document missing: " + assetPath, Toast.LENGTH_LONG).show();
+      return;
+    }
+    legalContentWebView.loadUrl(LegalDocuments.assetUrl(assetPath));
+    legalOverlay.setVisibility(View.VISIBLE);
+    legalOverlay.bringToFront();
+    legalOpen = true;
+  }
+
+  private void hideLegalPage() {
+    if (!legalOpen) return;
+    legalOverlay.setVisibility(View.GONE);
+    legalContentWebView.loadUrl("about:blank");
+    legalContentWebView.scrollTo(0, 0);
+    legalOpen = false;
+  }
+
+  private void hideMenuImmediate() {
+    if (menuServerEditor != null) {
+      menuServerEditor.setVisibility(View.GONE);
+    }
+    if (menuOverlay != null) {
+      menuOverlay.setVisibility(View.GONE);
+    }
+    menuOpen = false;
+    menuAnimating = false;
+  }
+
   private void reloadCurrentNavView() {
     if (activeNavTab == NavTab.PROFILE) {
       setActiveNavTab(NavTab.HOME);
@@ -594,6 +696,9 @@ public class MainActivity extends AppCompatActivity {
 
   private void showMenu() {
     if (menuOpen || menuAnimating) return;
+    if (legalOpen) {
+      hideLegalPage();
+    }
     refreshMenuProfileName();
     menuServerEditor.setVisibility(View.GONE);
     menuServerInput.setText(odooBase);
@@ -680,6 +785,10 @@ public class MainActivity extends AppCompatActivity {
                   }
                   return;
                 }
+                if (legalOpen) {
+                  hideLegalPage();
+                  return;
+                }
                 if (menuOpen) {
                   hideMenu();
                   return;
@@ -732,6 +841,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showLogin() {
+    hideLegalPage();
     hideMenu();
     onboardingScreen.setVisibility(View.GONE);
     mainContainer.setVisibility(View.GONE);

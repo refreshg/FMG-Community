@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/surface"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp">
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="FMG Community"
-            android:textColor="@color/brand_purple"
+            android:textColor="@color/brand_black"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -47,6 +47,7 @@
             android:layout_marginTop="6dp"
             android:background="@android:color/white"
             android:hint="https://example.odoo.com"
+            android:textColorHighlight="#33E63946"
             android:imeOptions="actionGo"
             android:inputType="textUri"
             android:padding="12dp"
@@ -58,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:backgroundTint="@color/brand_purple"
+            android:backgroundTint="@color/brand_red"
             android:text="შესვლა"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />

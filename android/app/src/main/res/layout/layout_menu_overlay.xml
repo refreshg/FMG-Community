@@ -35,16 +35,19 @@
             android:textStyle="bold" />
 
         <ScrollView
+            android:id="@+id/menu_scroll"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:fillViewport="true"
-            android:overScrollMode="never">
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="20dp">
 
                 <!-- 1. პროფილი -->
                 <LinearLayout
@@ -191,7 +194,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:backgroundTint="@color/brand_purple"
+                        android:backgroundTint="@color/brand_red"
                         android:text="@string/menu_save"
                         android:textAllCaps="false"
                         android:textColor="@android:color/white" />
@@ -203,7 +206,89 @@
                     android:layout_marginHorizontal="20dp"
                     android:background="#33FFFFFF" />
 
-                <!-- 7. გასვლა -->
+                <LinearLayout
+                    android:id="@+id/menu_item_privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_menu_row"
+                    android:gravity="center_vertical"
+                    android:minHeight="52dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp">
+
+                    <ImageView
+                        android:id="@+id/menu_privacy_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_menu_privacy" />
+
+                    <TextView
+                        android:id="@+id/menu_privacy_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:text="@string/menu_privacy"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_menu_chevron" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:background="#33FFFFFF" />
+
+                <LinearLayout
+                    android:id="@+id/menu_item_terms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_menu_row"
+                    android:gravity="center_vertical"
+                    android:minHeight="52dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="10dp">
+
+                    <ImageView
+                        android:id="@+id/menu_terms_icon"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_menu_terms" />
+
+                    <TextView
+                        android:id="@+id/menu_terms_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_weight="1"
+                        android:text="@string/menu_terms"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_menu_chevron" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:background="#33FFFFFF" />
+
+                <!-- გასვლა -->
                 <LinearLayout
                     android:id="@+id/menu_item_logout"
                     android:layout_width="match_parent"
