@@ -12,7 +12,7 @@ public final class NavUrls {
   public static final String PROFILE = "/en/my/home/personal/info";
   public static final String NOTIFICATIONS = "/en/my/home/notifications";
   public static final String SUGGESTION = "/en/my/home/suggestion";
-  public static final String HOW_IT_WORKS = "/en/my/home/how-it-works";
+  public static final String HOW_IT_WORKS = "/en/my/home/howtowork";
 
   public static String url(String base, String path) {
     if (base == null || path == null || !path.startsWith("/")) {

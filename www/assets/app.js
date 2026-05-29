@@ -16,7 +16,7 @@ const ROUTES = {
   PROFILE: "/en/my/home/personal/info",
   NOTIFICATIONS: "/en/my/home/notifications",
   SUGGESTION: "/en/my/home/suggestion",
-  HOW_IT_WORKS: "/en/my/home/how-it-works",
+  HOW_IT_WORKS: "/en/my/home/howtowork",
   LOGIN: "/web/login",
   LOGOUT: "/web/session/logout",
 };
