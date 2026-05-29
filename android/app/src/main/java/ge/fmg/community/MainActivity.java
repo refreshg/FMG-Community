@@ -33,9 +33,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import java.io.File;
@@ -48,12 +50,12 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
   private static final int NAV_INACTIVE = Color.parseColor("#888888");
   private static final int NAV_ACTIVE = Color.parseColor("#E63946");
-  private enum NavTab { HOME, TICKET, CREATE, OBJECTS, PROFILE }
+  private enum NavTab { BALANCE, TICKET, CREATE, OBJECTS, PROFILE }
 
   private AppPrefs prefs;
   private String odooBase;
   private String cachedUserDisplayName;
-  private NavTab activeNavTab = NavTab.HOME;
+  private NavTab activeNavTab = NavTab.BALANCE;
 
   private View onboardingScreen;
   private ViewPager2 onboardingPager;
@@ -70,15 +72,16 @@ public class MainActivity extends AppCompatActivity {
   private WebView webView;
   private View bottomNavContainer;
 
-  private View navHome;
+  private View headerContainer;
+  private View navBalance;
   private View navTicket;
   private View navObjects;
   private View navProfile;
-  private ImageView navHomeIcon;
+  private ImageView navBalanceIcon;
   private ImageView navTicketIcon;
   private ImageView navObjectsIcon;
   private ImageView navProfileIcon;
-  private TextView navHomeLabel;
+  private TextView navBalanceLabel;
   private TextView navTicketLabel;
   private TextView navObjectsLabel;
   private TextView navProfileLabel;
@@ -114,8 +117,9 @@ public class MainActivity extends AppCompatActivity {
     }
     super.onCreate(savedInstanceState);
 
-    WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+    WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
     setContentView(R.layout.activity_main);
+    configureSystemBars();
 
     prefs = new AppPrefs(this);
     odooBase = prefs.getServer();
@@ -154,10 +158,14 @@ public class MainActivity extends AppCompatActivity {
             });
 
     bindViews();
+    applyHeaderInsets();
+    applyFullscreenScreenInsets(loginScreen);
+    applyFullscreenScreenInsets(onboardingScreen);
     applyBottomNavInsets();
     setupWebView();
     setupLogin();
     setupOnboarding();
+    setupHeader();
     setupBottomNav();
     setupMenu();
     setupLegalOverlay();
@@ -185,15 +193,16 @@ public class MainActivity extends AppCompatActivity {
     webView = findViewById(R.id.odoo_webview);
     bottomNavContainer = findViewById(R.id.bottom_nav_container);
 
-    navHome = findViewById(R.id.nav_home);
+    headerContainer = findViewById(R.id.header_container);
+    navBalance = findViewById(R.id.nav_balance);
     navTicket = findViewById(R.id.nav_ticket);
     navObjects = findViewById(R.id.nav_objects);
     navProfile = findViewById(R.id.nav_profile);
-    navHomeIcon = findViewById(R.id.nav_home_icon);
+    navBalanceIcon = findViewById(R.id.nav_balance_icon);
     navTicketIcon = findViewById(R.id.nav_ticket_icon);
     navObjectsIcon = findViewById(R.id.nav_objects_icon);
     navProfileIcon = findViewById(R.id.nav_profile_icon);
-    navHomeLabel = findViewById(R.id.nav_home_label);
+    navBalanceLabel = findViewById(R.id.nav_balance_label);
     navTicketLabel = findViewById(R.id.nav_ticket_label);
     navObjectsLabel = findViewById(R.id.nav_objects_label);
     navProfileLabel = findViewById(R.id.nav_profile_label);
@@ -215,6 +224,45 @@ public class MainActivity extends AppCompatActivity {
       legalClose = legalRoot.findViewById(R.id.legal_close);
       legalContentWebView = legalRoot.findViewById(R.id.legal_content_webview);
     }
+  }
+
+  private void configureSystemBars() {
+    getWindow().setStatusBarColor(Color.TRANSPARENT);
+    WindowInsetsControllerCompat controller =
+        WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+    if (controller != null) {
+      controller.setAppearanceLightStatusBars(true);
+    }
+  }
+
+  private void applyHeaderInsets() {
+    if (headerContainer == null) return;
+    ViewCompat.setOnApplyWindowInsetsListener(
+        headerContainer,
+        (v, insets) -> {
+          Insets bars =
+              insets.getInsets(
+                  WindowInsetsCompat.Type.statusBars()
+                      | WindowInsetsCompat.Type.displayCutout());
+          v.setPaddingRelative(0, bars.top, 0, 0);
+          return insets;
+        });
+    ViewCompat.requestApplyInsets(headerContainer);
+  }
+
+  private void applyFullscreenScreenInsets(View screen) {
+    if (screen == null) return;
+    ViewCompat.setOnApplyWindowInsetsListener(
+        screen,
+        (v, insets) -> {
+          Insets bars =
+              insets.getInsets(
+                  WindowInsetsCompat.Type.systemBars()
+                      | WindowInsetsCompat.Type.displayCutout());
+          v.setPaddingRelative(bars.left, bars.top, bars.right, bars.bottom);
+          return insets;
+        });
+    ViewCompat.requestApplyInsets(screen);
   }
 
   private void applyBottomNavInsets() {
@@ -493,13 +541,33 @@ public class MainActivity extends AppCompatActivity {
     loadOdooPath("/web/login");
   }
 
+  private void setupHeader() {
+    View homeIcon = findViewById(R.id.header_home_icon);
+    View homeTitle = findViewById(R.id.header_home_title);
+    View.OnClickListener goHome = v -> navigateHeaderHome();
+    if (homeIcon != null) {
+      homeIcon.setOnClickListener(goHome);
+    }
+    if (homeTitle != null) {
+      homeTitle.setOnClickListener(goHome);
+    }
+  }
+
+  private void navigateHeaderHome() {
+    if (legalOpen) {
+      hideLegalPage();
+    }
+    hideMenu();
+    loadOdooPath(NavUrls.HOME);
+  }
+
   private void setupBottomNav() {
     findViewById(R.id.nav_create).setOnClickListener(v -> navigateTo(NavTab.CREATE));
-    navHome.setOnClickListener(v -> navigateTo(NavTab.HOME));
+    navBalance.setOnClickListener(v -> navigateTo(NavTab.BALANCE));
     navTicket.setOnClickListener(v -> navigateTo(NavTab.TICKET));
     navObjects.setOnClickListener(v -> navigateTo(NavTab.OBJECTS));
     navProfile.setOnClickListener(v -> navigateTo(NavTab.PROFILE));
-    setActiveNavTab(NavTab.HOME);
+    setActiveNavTab(NavTab.BALANCE);
   }
 
   private void navigateTo(NavTab tab) {
@@ -514,8 +582,8 @@ public class MainActivity extends AppCompatActivity {
     hideMenu();
     setActiveNavTab(tab);
     switch (tab) {
-      case HOME:
-        loadOdooPath(NavUrls.HOME);
+      case BALANCE:
+        loadOdooPath(NavUrls.BALANCE);
         break;
       case TICKET:
         loadOdooPath(NavUrls.TICKETS);
@@ -533,7 +601,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void setActiveNavTab(NavTab tab) {
     activeNavTab = tab;
-    applyNavItemStyle(navHomeIcon, navHomeLabel, tab == NavTab.HOME);
+    applyNavItemStyle(navBalanceIcon, navBalanceLabel, tab == NavTab.BALANCE);
     applyNavItemStyle(navTicketIcon, navTicketLabel, tab == NavTab.TICKET);
     applyNavItemStyle(navObjectsIcon, navObjectsLabel, tab == NavTab.OBJECTS);
     applyNavItemStyle(navProfileIcon, navProfileLabel, tab == NavTab.PROFILE);
@@ -687,8 +755,8 @@ public class MainActivity extends AppCompatActivity {
 
   private void reloadCurrentNavView() {
     if (activeNavTab == NavTab.PROFILE) {
-      setActiveNavTab(NavTab.HOME);
-      loadOdooPath(NavUrls.HOME);
+      setActiveNavTab(NavTab.BALANCE);
+      loadOdooPath(NavUrls.BALANCE);
       return;
     }
     navigateTo(activeNavTab);
@@ -863,7 +931,7 @@ public class MainActivity extends AppCompatActivity {
     loginScreen.setVisibility(View.GONE);
     hideMenu();
     mainContainer.setVisibility(View.VISIBLE);
-    setActiveNavTab(NavTab.HOME);
+    setActiveNavTab(NavTab.BALANCE);
   }
 
   private void loadOdooPath(String path) {

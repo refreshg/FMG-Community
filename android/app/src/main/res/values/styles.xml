@@ -12,6 +12,8 @@
         <item name="windowNoTitle">true</item>
         <item name="colorAccent">@color/brand_red</item>
         <item name="android:background">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/nav_bar_bg</item>
     </style>
 
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">

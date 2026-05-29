@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="header_height">48dp</dimen>
+    <dimen name="header_content_height">48dp</dimen>
+    <dimen name="header_horizontal_padding">16dp</dimen>
+    <dimen name="header_home_icon_size">22dp</dimen>
+    <dimen name="header_home_gap">8dp</dimen>
     <dimen name="bottom_nav_bar_height">64dp</dimen>
     <dimen name="bottom_nav_fab_size">58dp</dimen>
     <dimen name="bottom_nav_fab_overlap">26dp</dimen>

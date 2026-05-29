@@ -4,7 +4,11 @@ package ge.fmg.community;
 public final class NavUrls {
   private NavUrls() {}
 
+  /** Portal home (header logo). */
   public static final String HOME = "/en/my/home";
+
+  /** Balance tab — English locale root. */
+  public static final String BALANCE = "/en";
   public static final String TICKETS = "/en/my/home/tickets";
   public static final String CREATE_TICKET = "/en/my/home/tickets/create";
   public static final String REAL_ESTATE = "/en/my/home/real/estate";

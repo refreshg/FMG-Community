@@ -2,7 +2,9 @@
 <resources>
     <string name="app_name">FMG Community</string>
     <string name="title_activity_main">FMG Community</string>
-    <string name="nav_home">მთავარი</string>
+    <string name="nav_balance">ბალანსი</string>
+    <string name="header_logo_home">მთავარი</string>
+    <string name="header_home_title">FMG Community</string>
     <string name="nav_ticket">Ticket</string>
     <string name="nav_objects">ობიექტები</string>
     <string name="nav_profile">პროფილი</string>

@@ -9,6 +9,7 @@ const PREF_BIO_KEY = "bioEnabled";
 
 /** Relative Odoo portal paths — compose with ODOO_BASE at runtime. */
 const ROUTES = {
+  BALANCE: "/en",
   HOME: "/en/my/home",
   TICKETS: "/en/my/home/tickets",
   CREATE_TICKET: "/en/my/home/tickets/create",
