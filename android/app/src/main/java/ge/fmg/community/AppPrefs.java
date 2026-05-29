@@ -12,6 +12,8 @@ public final class AppPrefs {
   public static final String KEY_BIO = "bioEnabled";
   /** Same key as @capacitor/preferences in the web shell. */
   public static final String KEY_ONBOARDING_SEEN = "onboardingSeen";
+  /** True after the user has reached an authenticated Odoo portal URL (/my/*). */
+  public static final String KEY_LOGGED_IN = "loggedIn";
 
   private static final String DEFAULT_SERVER = "https://fmggeo-araa-19679928.dev.odoo.com";
 
@@ -57,8 +59,24 @@ public final class AppPrefs {
     prefs.edit().putBoolean(KEY_ONBOARDING_SEEN, seen).apply();
   }
 
-  /** Clears onboarding flag so slides show again (e.g. after logout). Server URL is unchanged. */
-  public void clearOnboardingSeen() {
-    prefs.edit().remove(KEY_ONBOARDING_SEEN).apply();
+  public boolean isLoggedIn() {
+    return prefs.getBoolean(KEY_LOGGED_IN, false);
+  }
+
+  public void setLoggedIn(boolean loggedIn) {
+    prefs.edit().putBoolean(KEY_LOGGED_IN, loggedIn).apply();
+  }
+
+  /** Persists login flags synchronously so they survive an immediate app kill. */
+  public void persistLoginSuccess() {
+    prefs.edit()
+        .putBoolean(KEY_LOGGED_IN, true)
+        .putBoolean(KEY_ONBOARDING_SEEN, true)
+        .commit();
+  }
+
+  /** Clears session flags so onboarding shows again (e.g. after logout). Server URL is unchanged. */
+  public void clearLoginState() {
+    prefs.edit().remove(KEY_ONBOARDING_SEEN).remove(KEY_LOGGED_IN).apply();
   }
 }

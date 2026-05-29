@@ -13,6 +13,10 @@
     <color name="background">#FFFFFF</color>
     <color name="nav_bar_bg">#0e0e10</color>
     <color name="nav_inactive">#888888</color>
+    <color name="login_input_bg">#fafafa</color>
+    <color name="login_input_border">#e0e0e0</color>
+    <color name="login_footer">#aaaaaa</color>
+    <color name="brand_red_pressed">#c92a37</color>
     <color name="nav_active">#E63946</color>
     <color name="action_green">#E63946</color>
 </resources>

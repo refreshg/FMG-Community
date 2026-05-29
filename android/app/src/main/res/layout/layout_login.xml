@@ -1,67 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/surface"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_settings_card"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:paddingStart="@dimen/login_horizontal_padding"
+        android:paddingEnd="@dimen/login_horizontal_padding"
+        android:paddingBottom="@dimen/login_horizontal_padding">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/login_top_spacing" />
+
+        <ImageView
+            android:id="@+id/login_logo"
+            android:layout_width="@dimen/login_logo_width"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/login_logo_content_desc"
+            android:importantForAccessibility="yes"
+            android:scaleType="fitCenter"
+            android:src="@drawable/fmg_logo" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/login_after_logo_spacing" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="FMG Community"
+            android:text="@string/login_title"
             android:textColor="@color/brand_black"
             android:textSize="22sp"
             android:textStyle="bold" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/login_title_subtitle_spacing" />
+
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="შეიყვანე სერვერის მისამართი"
-            android:textColor="@color/text_secondary"
+            android:text="@string/login_subtitle"
+            android:textColor="@color/nav_inactive"
             android:textSize="14sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="@dimen/login_before_form_spacing" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="სერვერი"
-            android:textColor="@color/text_secondary"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/login_server_label"
+            android:textColor="@color/brand_black"
             android:textSize="13sp" />
 
         <EditText
             android:id="@+id/login_server_input"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:background="@android:color/white"
-            android:hint="https://example.odoo.com"
-            android:textColorHighlight="#33E63946"
+            android:layout_height="@dimen/login_field_height"
+            android:layout_marginTop="@dimen/login_label_input_spacing"
+            android:background="@drawable/bg_login_input"
+            android:gravity="center_vertical"
+            android:hint="@string/login_server_hint"
             android:imeOptions="actionGo"
             android:inputType="textUri"
-            android:padding="12dp"
+            android:paddingStart="@dimen/login_input_padding_start"
+            android:paddingEnd="@dimen/login_input_padding_start"
             android:textColor="@color/text_primary"
+            android:textColorHighlight="#33E63946"
             android:textSize="15sp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/login_submit_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/brand_red"
-            android:text="შესვლა"
+            android:layout_height="@dimen/login_field_height"
+            android:layout_marginTop="@dimen/login_before_button_spacing"
+            android:background="@drawable/bg_login_button"
+            android:fontFamily="sans-serif-medium"
+            android:stateListAnimator="@null"
+            android:text="@string/login_submit"
             android:textAllCaps="false"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:backgroundTint="@null" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:minHeight="24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/login_footer"
+            android:textColor="@color/login_footer"
+            android:textSize="11sp" />
     </LinearLayout>
-</LinearLayout>
+</ScrollView>

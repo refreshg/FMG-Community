@@ -46,6 +46,12 @@ html, body {
   padding: 22px;
   border: 1px solid var(--border);
 }
+.login-logo {
+  width: 180px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
 .login-title {
   margin: 0;
   font-size: 22px;

@@ -4,6 +4,8 @@
 const DEFAULT_SERVER = "https://fmggeo-araa-19679928.dev.odoo.com";
 
 const PREF_SERVER_KEY = "odooServer";
+const PREF_ONBOARDING_KEY = "onboardingSeen";
+const PREF_LOGGED_IN_KEY = "loggedIn";
 const PREF_PUSH_KEY = "pushEnabled";
 const PREF_BIO_KEY = "bioEnabled";
 

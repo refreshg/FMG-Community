@@ -10,4 +10,14 @@
     <dimen name="bottom_nav_total_height">90dp</dimen>
     <dimen name="nav_icon_size">22dp</dimen>
     <dimen name="nav_label_size">11sp</dimen>
+    <dimen name="login_top_spacing">60dp</dimen>
+    <dimen name="login_logo_width">180dp</dimen>
+    <dimen name="login_after_logo_spacing">24dp</dimen>
+    <dimen name="login_title_subtitle_spacing">8dp</dimen>
+    <dimen name="login_before_form_spacing">36dp</dimen>
+    <dimen name="login_before_button_spacing">20dp</dimen>
+    <dimen name="login_horizontal_padding">24dp</dimen>
+    <dimen name="login_field_height">52dp</dimen>
+    <dimen name="login_label_input_spacing">6dp</dimen>
+    <dimen name="login_input_padding_start">16dp</dimen>
 </resources>

@@ -4,10 +4,12 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.provider.MediaStore;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -102,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
   private boolean legalOpen;
 
   private boolean loggingOut;
+  /** True while waiting for first onPageFinished after cold start resume load to /my/home. */
+  private boolean sessionResumeProbe;
   private ValueCallback<Uri[]> filePathCallback;
   private Uri cameraPhotoUri;
   private WebChromeClient.FileChooserParams pendingFileChooserParams;
@@ -117,12 +121,13 @@ public class MainActivity extends AppCompatActivity {
     }
     super.onCreate(savedInstanceState);
 
+    prefs = new AppPrefs(this);
+    odooBase = prefs.getServer();
+    logColdStartDiagnostics();
+
     WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
     setContentView(R.layout.activity_main);
     configureSystemBars();
-
-    prefs = new AppPrefs(this);
-    odooBase = prefs.getServer();
 
     cameraPermissionLauncher =
         registerForActivityResult(
@@ -171,11 +176,48 @@ public class MainActivity extends AppCompatActivity {
     setupLegalOverlay();
     setupBackNavigation();
 
-    if (prefs.isOnboardingSeen()) {
-      showLogin();
-    } else {
-      showOnboarding();
+    routeStartup();
+  }
+
+  /**
+   * Restores UI from preferences: onboarding → server screen → WebView (when logged in).
+   * {@code loggedIn} is set only after Odoo redirects to /my/*; cookies persist via CookieManager.
+   */
+  /** STEP 2 — logged before any screen is shown on cold start. */
+  private void logColdStartDiagnostics() {
+    Log.i(SessionDiagnostics.TAG, "========== STEP 2: cold start (onCreate, before UI route) ==========");
+    SessionDiagnostics.logPrefs(prefs, "STEP2");
+    SessionDiagnostics.logCookiesForBase("STEP2", odooBase);
+  }
+
+  private void routeStartup() {
+    odooBase = prefs.getServer();
+    Log.i(SessionDiagnostics.TAG, "========== routeStartup ==========");
+    SessionDiagnostics.logPrefs(prefs, "STEP2 routeStartup");
+    SessionDiagnostics.logCookiesForBase("STEP2 routeStartup", odooBase);
+
+    // Older builds could set onboardingSeen without a successful login; reset until loggedIn.
+    if (!prefs.isLoggedIn() && prefs.isOnboardingSeen()) {
+      Log.w(
+          SessionDiagnostics.TAG,
+          "routeStartup: clearing legacy onboardingSeen (loggedIn still false)");
+      prefs.clearLoginState();
+      SessionDiagnostics.logPrefs(prefs, "STEP2 after legacy clear");
     }
+    if (prefs.isLoggedIn() && odooBase != null && !odooBase.isEmpty()) {
+      SessionDiagnostics.logScreenRoute("STEP2", "WebView + load " + NavUrls.HOME);
+      sessionResumeProbe = true;
+      showMain();
+      loadOdooPath(NavUrls.HOME);
+      return;
+    }
+    if (!prefs.isLoggedIn() && !prefs.isOnboardingSeen()) {
+      SessionDiagnostics.logScreenRoute("STEP2", "onboarding slides");
+      showOnboarding();
+      return;
+    }
+    SessionDiagnostics.logScreenRoute("STEP2", "server URL screen (login shell)");
+    showLogin();
   }
 
   private void bindViews() {
@@ -299,6 +341,7 @@ public class MainActivity extends AppCompatActivity {
     CookieManager cm = CookieManager.getInstance();
     cm.setAcceptCookie(true);
     cm.setAcceptThirdPartyCookies(webView, true);
+    SessionDiagnostics.logWebViewAndManifest(this, webView);
 
     webView.setWebChromeClient(
         new WebChromeClient() {
@@ -319,12 +362,22 @@ public class MainActivity extends AppCompatActivity {
     webView.setWebViewClient(
         new WebViewClient() {
           @Override
-          public void onPageFinished(WebView view, String url) {
-            if (loggingOut) {
-              finishLogout();
-            } else {
-              updateCachedUserNameFromSession();
+          public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            if (sessionResumeProbe) {
+              SessionDiagnostics.logPageFinished("STEP3 onPageStarted (resume probe)", url);
             }
+          }
+
+          @Override
+          public void onPageFinished(WebView view, String url) {
+            if (sessionResumeProbe) {
+              Log.i(
+                  SessionDiagnostics.TAG,
+                  "========== STEP 3: first navigation after resume load ==========");
+              SessionDiagnostics.logPageFinished("STEP3 onPageFinished (resume probe)", url);
+              sessionResumeProbe = false;
+            }
+            handleWebViewUrlLoaded(url);
           }
         });
   }
@@ -509,10 +562,56 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
+  /** Hides onboarding for this session only; persisted after successful Odoo login. */
   private void completeOnboarding() {
-    prefs.setOnboardingSeen(true);
     onboardingScreen.setVisibility(View.GONE);
     showLogin();
+  }
+
+  private void handleWebViewUrlLoaded(String url) {
+    if (loggingOut) {
+      finishLogout();
+      return;
+    }
+    if (isOdooPortalSessionUrl(url)) {
+      markLoginSuccess(url);
+    }
+    updateCachedUserNameFromSession();
+  }
+
+  /** True when Odoo has redirected to the authenticated portal (/my/*). */
+  private static boolean isOdooPortalSessionUrl(String url) {
+    if (url == null || url.isEmpty()) {
+      return false;
+    }
+    try {
+      URI uri = URI.create(url);
+      String path = uri.getPath();
+      if (path == null || path.isEmpty()) {
+        return false;
+      }
+      return path.contains("/my/");
+    } catch (Exception ignored) {
+      return false;
+    }
+  }
+
+  private void markLoginSuccess(String triggerUrl) {
+    Log.i(
+        SessionDiagnostics.TAG,
+        "========== STEP 1: successful login (/my/* detected) ==========");
+    Log.i(SessionDiagnostics.TAG, "STEP1 trigger url=" + triggerUrl);
+    SessionDiagnostics.logCookiesForBase("STEP1 (before persist)", odooBase);
+    if (!prefs.isLoggedIn()) {
+      prefs.persistLoginSuccess();
+      CookieManager.getInstance().flush();
+      Log.i(SessionDiagnostics.TAG, "STEP1 wrote loggedIn=true onboardingSeen=true to prefs");
+    } else {
+      Log.i(SessionDiagnostics.TAG, "STEP1 loggedIn was already true — prefs not rewritten");
+    }
+    SessionDiagnostics.logPrefs(prefs, "STEP1");
+    SessionDiagnostics.logFlush("STEP1");
+    SessionDiagnostics.logCookiesForBase("STEP1 (after flush)", odooBase);
   }
 
   private void setupLogin() {
@@ -935,7 +1034,15 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void loadOdooPath(String path) {
-    webView.loadUrl(NavUrls.url(odooBase, path));
+    String fullUrl = NavUrls.url(odooBase, path);
+    if (sessionResumeProbe) {
+      Log.i(
+          SessionDiagnostics.TAG,
+          "========== STEP 3: loading resume URL ==========");
+      SessionDiagnostics.logLoadRequest("STEP3", fullUrl);
+      SessionDiagnostics.logCookiesForBase("STEP3 (before loadUrl)", odooBase);
+    }
+    webView.loadUrl(fullUrl);
   }
 
   private void logout() {
@@ -949,7 +1056,7 @@ public class MainActivity extends AppCompatActivity {
   private void finishLogout() {
     if (!loggingOut) return;
     loggingOut = false;
-    prefs.clearOnboardingSeen();
+    prefs.clearLoginState();
     CookieManager.getInstance()
         .removeAllCookies(
             value -> {
