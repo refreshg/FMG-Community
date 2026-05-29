@@ -1,0 +1,18 @@
+{
+  "appId": "ge.fmg.community",
+  "appName": "FMG Community",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#714b67",
+      "showSpinner": false
+    },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FMG Community</string>
+    <string name="title_activity_main">FMG Community</string>
+    <string name="default_user_name">მომხმარებელი</string>
+    <string name="nav_home">მთავარი</string>
+    <string name="nav_ticket">Ticket</string>
+    <string name="nav_objects">ობიექტები</string>
+    <string name="nav_profile">პროფილი</string>
+    <string name="profile_title">პროფილი</string>
+    <string name="menu_title">მენიუ</string>
+    <string name="menu_profile">პროფილი</string>
+    <string name="menu_news">სიახლეები</string>
+    <string name="menu_offers">შეთავაზებები</string>
+    <string name="menu_how_it_works">როგორ მუშაობს</string>
+    <string name="menu_chat">ონლაინ ჩატი</string>
+    <string name="menu_server">სერვერის ლინკი</string>
+    <string name="menu_logout">გასვლა</string>
+    <string name="menu_save">შენახვა</string>
+    <string name="onboarding_skip">გამოტოვება</string>
+    <string name="onboarding_next">შემდეგი</string>
+    <string name="onboarding_finish">გადადით აპლიკაციაში</string>
+    <string name="onboarding_slide1_title">გახსენი ტიკეტი</string>
+    <string name="onboarding_slide1_body">აცნობე ნებისმიერი დაზიანების შესახებ — სადარბაზო, ლიფტი, ეზო. გადაიღე ფოტო და თვალი ადევნე სტატუსს.</string>
+    <string name="onboarding_slide2_title">ნახე ბალანსი ერთი კლიკით</string>
+    <string name="onboarding_slide2_body">ლიფტი, კომუნალური, საერთო საფასური — ყველა გადასახადი ერთ ადგილას. გადახდის ისტორიაც აქვე ჩანს.</string>
+    <string name="onboarding_slide3_title">შეტყობინებები რომ არ გამოგრჩეს</string>
+    <string name="onboarding_slide3_body">ახალი ცნობები, ტიკეტის სტატუსი, გადასახადის შეხსენებები — ყველაფერი პირდაპირ ტელეფონზე.</string>
+</resources>

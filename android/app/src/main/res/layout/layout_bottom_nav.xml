@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_nav_container"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bottom_nav_total_height"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_nav_bar_height"
+        android:layout_gravity="bottom"
+        android:background="@color/nav_bar_bg" />
+
+    <LinearLayout
+        android:id="@+id/bottom_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/bottom_nav_bar_height"
+        android:layout_gravity="bottom"
+        android:background="@color/nav_bar_bg"
+        android:baselineAligned="false"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingTop="6dp">
+
+        <LinearLayout
+            android:id="@+id/nav_home"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/nav_home_icon"
+                android:layout_width="@dimen/nav_icon_size"
+                android:layout_height="@dimen/nav_icon_size"
+                android:contentDescription="@string/nav_home"
+                android:src="@drawable/ic_nav_home"
+                app:tint="@color/nav_inactive" />
+
+            <TextView
+                android:id="@+id/nav_home_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_home"
+                android:textColor="@color/nav_inactive"
+                android:textSize="@dimen/nav_label_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_ticket"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/nav_ticket_icon"
+                android:layout_width="@dimen/nav_icon_size"
+                android:layout_height="@dimen/nav_icon_size"
+                android:contentDescription="@string/nav_ticket"
+                android:src="@drawable/ic_nav_ticket"
+                app:tint="@color/nav_inactive" />
+
+            <TextView
+                android:id="@+id/nav_ticket_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_ticket"
+                android:textColor="@color/nav_inactive"
+                android:textSize="@dimen/nav_label_size" />
+        </LinearLayout>
+
+        <!-- Center slot: FAB sits above the bar -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <ImageButton
+                android:id="@+id/nav_create"
+                android:layout_width="@dimen/bottom_nav_fab_size"
+                android:layout_height="@dimen/bottom_nav_fab_size"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_marginTop="-8dp"
+                android:background="@drawable/bg_nav_fab"
+                android:contentDescription="ახალი ტიკეტი"
+                android:elevation="8dp"
+                android:padding="14dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_nav_plus"
+                app:tint="@android:color/white" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_objects"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/nav_objects_icon"
+                android:layout_width="@dimen/nav_icon_size"
+                android:layout_height="@dimen/nav_icon_size"
+                android:contentDescription="@string/nav_objects"
+                android:src="@drawable/ic_nav_building"
+                app:tint="@color/nav_inactive" />
+
+            <TextView
+                android:id="@+id/nav_objects_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_objects"
+                android:textColor="@color/nav_inactive"
+                android:textSize="@dimen/nav_label_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nav_profile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/nav_profile_icon"
+                android:layout_width="@dimen/nav_icon_size"
+                android:layout_height="@dimen/nav_icon_size"
+                android:contentDescription="@string/nav_profile"
+                android:src="@drawable/ic_nav_person"
+                app:tint="@color/nav_inactive" />
+
+            <TextView
+                android:id="@+id/nav_profile_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/nav_profile"
+                android:textColor="@color/nav_inactive"
+                android:textSize="@dimen/nav_label_size" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

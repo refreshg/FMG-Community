@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  />
+  <title>FMG Community</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <!-- Native server entry screen (server only; Odoo handles credentials in WebView) -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <h1 class="login-title">FMG Community</h1>
+      <p class="login-subtitle">შეიყვანე სერვერის მისამართი</p>
+
+      <label class="field">
+        <span class="field-label">სერვერი</span>
+        <input id="login-server" class="field-input" type="text" inputmode="url" autocapitalize="none" autocomplete="off" />
+      </label>
+
+      <button id="login-btn" class="btn-primary login-btn">შესვლა</button>
+    </div>
+  </div>
+
+  <!-- Onboarding (shown on first launch only) -->
+  <div id="onboarding" class="onboarding hidden">
+    <div class="onboarding-slide">
+      <div class="ob-icon">🎫</div>
+      <h2>გახსენი ტიკეტი</h2>
+      <p>აცნობე მართვას ნებისმიერი დაზიანების შესახებ — სადარბაზო, ლიფტი, ეზო.</p>
+    </div>
+    <button id="ob-next" class="btn-primary">გაგრძელება</button>
+  </div>
+
+  <!-- App header -->
+  <header id="app-header" class="app-header">
+    <span id="header-title">ტიკეტები</span>
+    <button id="reload-btn" class="reload-btn" aria-label="განახლება">↻</button>
+  </header>
+
+  <!-- WebView container (Odoo content lives here) -->
+  <main id="content">
+    <div id="loader" class="loader">
+      <div class="spinner"></div>
+      <p>იტვირთება...</p>
+    </div>
+    <div id="offline" class="offline hidden">
+      <div class="offline-icon">📡</div>
+      <p>ინტერნეტი არ არის</p>
+      <button id="retry-btn" class="btn-primary">სცადე ხელახლა</button>
+    </div>
+    <!--
+      NOTE: Odoo cannot be loaded inside a cross-origin iframe (X-Frame-Options/CSP).
+      On Android/iOS we mount a native WebView behind this shell instead.
+    -->
+    <div id="webview" class="webview native-webview-host" aria-hidden="true"></div>
+  </main>
+
+  <!-- Native bottom tab bar -->
+  <nav id="tabbar" class="tabbar">
+    <button class="tab active" data-key="tickets" data-title="ტიკეტები">
+      <span class="tab-icon">🎫</span>
+      <span class="tab-label">ტიკეტები</span>
+    </button>
+    <button class="tab" data-key="balance" data-title="ბალანსი">
+      <span class="tab-icon">💳</span>
+      <span class="tab-label">ბალანსი</span>
+    </button>
+    <button class="tab" data-key="notifications" data-title="შეტყობინებები">
+      <span class="tab-icon">🔔</span>
+      <span class="tab-label">შეტყობ.</span>
+    </button>
+    <button class="tab" data-key="profile" data-title="პროფილი">
+      <span class="tab-icon">👤</span>
+      <span class="tab-label">პროფილი</span>
+    </button>
+  </nav>
+
+  <!-- Native Profile screen (not a WebView) -->
+  <div id="profile-screen" class="profile-screen hidden">
+    <div class="profile-card">
+      <div class="profile-avatar">👤</div>
+      <div id="profile-name" class="profile-name">მომხმარებელი</div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-row">
+        <span>შეტყობინებები</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-push" checked />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <span>ბიომეტრიული დაცვა</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-bio" />
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-row link" id="about-row">
+        <span>აპის შესახებ</span><span class="chevron">›</span>
+      </div>
+      <div class="settings-row link" id="change-server-row">
+        <span>სერვერის შეცვლა</span><span class="chevron">›</span>
+      </div>
+      <div class="settings-row link" id="privacy-row">
+        <span>კონფიდენციალურობის პოლიტიკა</span><span class="chevron">›</span>
+      </div>
+      <div class="settings-row link" id="terms-row">
+        <span>წესები და პირობები</span><span class="chevron">›</span>
+      </div>
+    </div>
+
+    <button id="logout-btn" class="btn-logout">გასვლა</button>
+
+    <div class="app-version">ვერსია <span id="app-version">1.0.0</span></div>
+  </div>
+
+  <!-- About modal (native static screen) -->
+  <div id="about-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>FMG Community</h2>
+      <p>სამეზობლოს მართვის აპლიკაცია — ტიკეტები, ბალანსი და გადასახადები ერთ ადგილას.</p>
+      <p class="muted">© 2026 FMG Community. ყველა უფლება დაცულია.</p>
+      <p class="muted">support@fmg.ge</p>
+      <button id="about-close" class="btn-primary">დახურვა</button>
+    </div>
+  </div>
+
+  <script src="capacitor.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

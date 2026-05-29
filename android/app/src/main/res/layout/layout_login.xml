@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_settings_card"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="FMG Community"
+            android:textColor="@color/brand_purple"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="შეიყვანე სერვერის მისამართი"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="სერვერი"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/login_server_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@android:color/white"
+            android:hint="https://example.odoo.com"
+            android:imeOptions="actionGo"
+            android:inputType="textUri"
+            android:padding="12dp"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/login_submit_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/brand_purple"
+            android:text="შესვლა"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</LinearLayout>

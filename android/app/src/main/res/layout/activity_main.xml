@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
+
+    <include
+        android:id="@+id/onboarding_screen"
+        layout="@layout/layout_onboarding"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/login_screen"
+        layout="@layout/layout_login"
+        android:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/header_bar"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/header_height"
+            android:background="@color/surface"
+            android:elevation="4dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/header_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="FMG Community"
+                android:textColor="@color/brand_purple"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/header_divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_bar" />
+
+        <include
+            android:id="@+id/bottom_nav"
+            layout="@layout/layout_bottom_nav"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/bottom_nav_total_height"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/webview_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clipChildren="true"
+            android:clipToPadding="true"
+            app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_divider">
+
+            <WebView
+                android:id="@+id/odoo_webview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="vertical" />
+        </FrameLayout>
+
+        <include
+            android:id="@+id/menu_overlay"
+            layout="@layout/layout_menu_overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_divider" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
