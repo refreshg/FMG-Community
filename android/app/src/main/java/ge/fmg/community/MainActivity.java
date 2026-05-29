@@ -25,7 +25,6 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import androidx.core.splashscreen.SplashScreen;
@@ -360,6 +359,9 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showOnboarding() {
+    webView.stopLoading();
+    onboardingPager.setCurrentItem(0, false);
+    updateOnboardingUi(0);
     onboardingScreen.setVisibility(View.VISIBLE);
     loginScreen.setVisibility(View.GONE);
     mainContainer.setVisibility(View.GONE);
@@ -420,16 +422,16 @@ public class MainActivity extends AppCompatActivity {
     setActiveNavTab(tab);
     switch (tab) {
       case HOME:
-        loadAbsoluteUrl(NavUrls.home(odooBase));
+        loadOdooPath(NavUrls.HOME);
         break;
       case TICKET:
-        loadAbsoluteUrl(NavUrls.tickets(odooBase));
+        loadOdooPath(NavUrls.TICKETS);
         break;
       case CREATE:
-        loadAbsoluteUrl(NavUrls.createTicket(odooBase));
+        loadOdooPath(NavUrls.CREATE_TICKET);
         break;
       case OBJECTS:
-        loadAbsoluteUrl(NavUrls.realEstate(odooBase));
+        loadOdooPath(NavUrls.REAL_ESTATE);
         break;
       default:
         break;
@@ -455,19 +457,16 @@ public class MainActivity extends AppCompatActivity {
     bindMenuRow(findViewById(R.id.menu_item_offers), R.drawable.ic_menu_gift, R.string.menu_offers);
     bindMenuRow(
         findViewById(R.id.menu_item_how_it_works), R.drawable.ic_menu_help, R.string.menu_how_it_works);
-    bindMenuRow(findViewById(R.id.menu_item_chat), R.drawable.ic_menu_chat, R.string.menu_chat);
 
     menuBackdrop.setOnClickListener(v -> hideMenu());
 
-    findViewById(R.id.menu_item_profile).setOnClickListener(v -> showProfileNameDialog());
+    findViewById(R.id.menu_item_profile).setOnClickListener(v -> openMenuPath(NavUrls.PROFILE));
     findViewById(R.id.menu_item_news)
-        .setOnClickListener(v -> openMenuUrl(NavUrls.news(odooBase)));
+        .setOnClickListener(v -> openMenuPath(NavUrls.NOTIFICATIONS));
     findViewById(R.id.menu_item_offers)
-        .setOnClickListener(v -> openMenuUrl(NavUrls.offers(odooBase)));
+        .setOnClickListener(v -> openMenuPath(NavUrls.SUGGESTION));
     findViewById(R.id.menu_item_how_it_works)
-        .setOnClickListener(v -> openMenuUrl(NavUrls.howItWorks(odooBase)));
-    findViewById(R.id.menu_item_chat)
-        .setOnClickListener(v -> openMenuUrl(NavUrls.chat(odooBase)));
+        .setOnClickListener(v -> openMenuPath(NavUrls.HOW_IT_WORKS));
 
     findViewById(R.id.menu_item_server)
         .setOnClickListener(
@@ -494,8 +493,7 @@ public class MainActivity extends AppCompatActivity {
               menuServerEditor.setVisibility(View.GONE);
               Toast.makeText(this, "შენახულია", Toast.LENGTH_SHORT).show();
               hideMenu();
-              loadAbsoluteUrl(NavUrls.home(odooBase));
-              setActiveNavTab(NavTab.HOME);
+              reloadCurrentNavView();
             });
 
     findViewById(R.id.menu_item_logout).setOnClickListener(v -> logout());
@@ -522,9 +520,18 @@ public class MainActivity extends AppCompatActivity {
     if (label != null) label.setText(labelRes);
   }
 
-  private void openMenuUrl(String url) {
+  private void openMenuPath(String path) {
     hideMenu();
-    loadAbsoluteUrl(url);
+    loadOdooPath(path);
+  }
+
+  private void reloadCurrentNavView() {
+    if (activeNavTab == NavTab.PROFILE) {
+      setActiveNavTab(NavTab.HOME);
+      loadOdooPath(NavUrls.HOME);
+      return;
+    }
+    navigateTo(activeNavTab);
   }
 
   private void showMenu() {
@@ -584,18 +591,6 @@ public class MainActivity extends AppCompatActivity {
             : getString(R.string.default_user_name);
     menuProfileSubname.setText(displayName);
     fetchProfileDisplayName();
-  }
-
-  private void showProfileNameDialog() {
-    String name =
-        cachedUserDisplayName != null && !cachedUserDisplayName.isEmpty()
-            ? cachedUserDisplayName
-            : getString(R.string.default_user_name);
-    new AlertDialog.Builder(this)
-        .setTitle(R.string.menu_profile)
-        .setMessage(name)
-        .setPositiveButton("OK", null)
-        .show();
   }
 
   private void setupBackNavigation() {
@@ -705,29 +700,26 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void loadOdooPath(String path) {
-    webView.loadUrl(odooBase + path);
-  }
-
-  private void loadAbsoluteUrl(String url) {
-    webView.loadUrl(url);
+    webView.loadUrl(NavUrls.url(odooBase, path));
   }
 
   private void logout() {
     hideMenu();
     loggingOut = true;
     cachedUserDisplayName = null;
-    webView.loadUrl(odooBase + "/web/session/logout");
+    loadOdooPath("/web/session/logout");
     webView.postDelayed(this::finishLogout, 3000);
   }
 
   private void finishLogout() {
     if (!loggingOut) return;
     loggingOut = false;
+    prefs.clearOnboardingSeen();
     CookieManager.getInstance()
         .removeAllCookies(
             value -> {
               CookieManager.getInstance().flush();
-              runOnUiThread(this::showLogin);
+              runOnUiThread(this::showOnboarding);
             });
   }
 

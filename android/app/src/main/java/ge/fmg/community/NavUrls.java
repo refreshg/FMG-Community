@@ -1,38 +1,56 @@
 package ge.fmg.community;
 
-/** Odoo portal paths (English locale) relative to server base. */
+/** Odoo portal paths (English locale) relative to server base — compose with {@link #url}. */
 public final class NavUrls {
   private NavUrls() {}
 
+  public static final String HOME = "/en/my/home";
+  public static final String TICKETS = "/en/my/home/tickets";
+  public static final String CREATE_TICKET = "/en/my/home/tickets/create";
+  public static final String REAL_ESTATE = "/en/my/home/real/estate";
+
+  public static final String PROFILE = "/en/my/home/personal/info";
+  public static final String NOTIFICATIONS = "/en/my/home/notifications";
+  public static final String SUGGESTION = "/en/my/home/suggestion";
+  public static final String HOW_IT_WORKS = "/en/my/home/how-it-works";
+
+  public static String url(String base, String path) {
+    if (base == null || path == null || !path.startsWith("/")) {
+      throw new IllegalArgumentException("base and path required; path must start with /");
+    }
+    String b = base.endsWith("/") ? base.substring(0, base.length() - 1) : base;
+    return b + path;
+  }
+
   public static String home(String base) {
-    return base + "/en/my/home";
+    return url(base, HOME);
   }
 
   public static String tickets(String base) {
-    return base + "/en/my/home/tickets";
+    return url(base, TICKETS);
   }
 
   public static String createTicket(String base) {
-    return base + "/en/my/home/tickets/create";
+    return url(base, CREATE_TICKET);
   }
 
   public static String realEstate(String base) {
-    return base + "/en/my/home/real/estate";
+    return url(base, REAL_ESTATE);
   }
 
-  public static String news(String base) {
-    return base + "/en/my/home/news";
+  public static String profile(String base) {
+    return url(base, PROFILE);
   }
 
-  public static String offers(String base) {
-    return base + "/en/my/home/offers";
+  public static String notifications(String base) {
+    return url(base, NOTIFICATIONS);
+  }
+
+  public static String suggestion(String base) {
+    return url(base, SUGGESTION);
   }
 
   public static String howItWorks(String base) {
-    return base + "/en/my/home/how-it-works";
-  }
-
-  public static String chat(String base) {
-    return base + "/en/my/home/chat";
+    return url(base, HOW_IT_WORKS);
   }
 }

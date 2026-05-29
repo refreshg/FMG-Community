@@ -56,4 +56,9 @@ public final class AppPrefs {
   public void setOnboardingSeen(boolean seen) {
     prefs.edit().putBoolean(KEY_ONBOARDING_SEEN, seen).apply();
   }
+
+  /** Clears onboarding flag so slides show again (e.g. after logout). Server URL is unchanged. */
+  public void clearOnboardingSeen() {
+    prefs.edit().remove(KEY_ONBOARDING_SEEN).apply();
+  }
 }

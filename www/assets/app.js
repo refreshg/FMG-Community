@@ -7,6 +7,22 @@ const PREF_SERVER_KEY = "odooServer";
 const PREF_PUSH_KEY = "pushEnabled";
 const PREF_BIO_KEY = "bioEnabled";
 
+/** Relative Odoo portal paths — compose with ODOO_BASE at runtime. */
+const ROUTES = {
+  HOME: "/en/my/home",
+  TICKETS: "/en/my/home/tickets",
+  CREATE_TICKET: "/en/my/home/tickets/create",
+  REAL_ESTATE: "/en/my/home/real/estate",
+  PROFILE: "/en/my/home/personal/info",
+  NOTIFICATIONS: "/en/my/home/notifications",
+  SUGGESTION: "/en/my/home/suggestion",
+  HOW_IT_WORKS: "/en/my/home/how-it-works",
+  LOGIN: "/web/login",
+  LOGOUT: "/web/session/logout",
+};
+
+let ODOO_BASE = DEFAULT_SERVER;
+
 function normalizeServer(input) {
   let s = (input || "").trim();
   if (!s) return null;
@@ -18,6 +34,11 @@ function normalizeServer(input) {
   } catch {
     return null;
   }
+}
+
+function odooUrl(path) {
+  const base = ODOO_BASE.endsWith("/") ? ODOO_BASE.slice(0, -1) : ODOO_BASE;
+  return base + path;
 }
 
 function openExternal(url) {
