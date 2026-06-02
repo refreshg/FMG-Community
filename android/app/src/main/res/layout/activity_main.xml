@@ -37,67 +37,131 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <!-- Reference HTML/CSS: .app-topbar -->
             <LinearLayout
                 android:id="@+id/header_bar"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/header_content_height"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingStart="@dimen/header_horizontal_padding"
-                android:paddingEnd="@dimen/header_horizontal_padding"
+                android:paddingStart="20dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="18dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <FrameLayout
-                    android:id="@+id/header_logo_pill"
-                    android:layout_width="@dimen/header_logo_pill_width"
-                    android:layout_height="@dimen/header_logo_pill_height"
-                    android:background="@drawable/bg_logo_pill"
-                    android:foreground="?android:attr/selectableItemBackground">
-
-                    <ImageView
-                        android:id="@+id/header_logo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/header_logo_height"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@string/header_logo_content_desc"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/fmg_logo" />
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/header_app_title"
+                <!-- .app-topbar-brand -->
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/header_title_gap"
                     android:layout_weight="1"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/header_app_title"
-                    android:textColor="@android:color/white"
-                    android:textSize="17sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/header_phone_btn"
-                    android:layout_width="@dimen/header_action_btn_size"
-                    android:layout_height="@dimen/header_action_btn_size"
-                    android:background="@drawable/bg_header_icon_btn"
-                    android:contentDescription="@string/header_phone"
-                    android:padding="9dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_header_phone" />
+                    <!-- .app-topbar-logo-mark -->
+                    <LinearLayout
+                        android:id="@+id/header_logo_pill"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_logo_pill"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingStart="8dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="6dp">
 
-                <ImageButton
-                    android:id="@+id/header_bell_btn"
-                    android:layout_width="@dimen/header_action_btn_size"
-                    android:layout_height="@dimen/header_action_btn_size"
-                    android:layout_marginStart="@dimen/header_action_gap"
-                    android:background="@drawable/bg_header_icon_btn"
-                    android:contentDescription="@string/header_notifications"
-                    android:padding="9dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_header_bell" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-black"
+                                android:includeFontPadding="false"
+                                android:text="F"
+                                android:textColor="@color/text_primary"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-black"
+                                android:includeFontPadding="false"
+                                android:text="M"
+                                android:textColor="#E53935"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-black"
+                                android:includeFontPadding="false"
+                                android:text="G"
+                                android:textColor="@color/text_primary"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif"
+                            android:includeFontPadding="false"
+                            android:letterSpacing="0.14"
+                            android:text="SOFT"
+                            android:textColor="@color/text_primary"
+                            android:textSize="8sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/header_app_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-medium"
+                        android:maxLines="1"
+                        android:text="@string/header_app_title"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <!-- .app-topbar-actions -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/header_phone_btn"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/header_phone"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_header_phone" />
+
+                    <ImageButton
+                        android:id="@+id/header_bell_btn"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="18dp"
+                        android:background="@android:color/transparent"
+                        android:contentDescription="@string/header_notifications"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_header_bell" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -105,7 +169,8 @@
             android:id="@+id/bottom_nav"
             layout="@layout/layout_bottom_nav"
             android:layout_width="0dp"
-            android:layout_height="@dimen/bottom_nav_total_height"
+            android:layout_height="wrap_content"
+            android:elevation="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -117,6 +182,7 @@
             android:background="@color/background_gray"
             android:clipChildren="true"
             android:clipToPadding="true"
+            android:elevation="0dp"
             app:layout_constraintBottom_toTopOf="@id/bottom_nav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

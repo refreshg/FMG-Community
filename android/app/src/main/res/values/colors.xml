@@ -12,8 +12,10 @@
     <color name="text_body">#444444</color>
     <color name="nav_icon_inactive">#555555</color>
     <color name="divider">#E6E6E6</color>
+    <color name="border">#e5e9ec</color>
     <color name="header_border">#e5e5e5</color>
     <color name="surface">#FFFFFF</color>
+    <color name="surface_muted">#f1f4f6</color>
     <color name="background_gray">#f5f7f9</color>
     <color name="background">#f5f7f9</color>
     <color name="nav_bar_bg">#14323d</color>
