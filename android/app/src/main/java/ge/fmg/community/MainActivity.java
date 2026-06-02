@@ -52,7 +52,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-  private enum NavTab { HOME, PROPERTY, SERVICE, FINANCE, COMMUNITY }
+  private enum NavTab { HOME, PROPERTY, SERVICE, PROFILE, FINANCE, COMMUNITY, MENU }
 
   private AppPrefs prefs;
   private String odooBase;
@@ -717,13 +717,14 @@ public class MainActivity extends AppCompatActivity {
     if (appTitle != null) {
       appTitle.setOnClickListener(goHome);
     }
-    View phoneBtn = findViewById(R.id.header_phone_btn);
     View bellBtn = findViewById(R.id.header_bell_btn);
-    if (phoneBtn != null) {
-      phoneBtn.setOnClickListener(v -> {});
-    }
     if (bellBtn != null) {
-      bellBtn.setOnClickListener(v -> {});
+      bellBtn.setOnClickListener(
+          v -> {
+            String number = "0322470600";
+            Uri uri = Uri.parse("tel:" + Uri.encode(number));
+            startActivity(new Intent(Intent.ACTION_DIAL, uri));
+          });
     }
   }
 
@@ -739,6 +740,8 @@ public class MainActivity extends AppCompatActivity {
     navHome.setOnClickListener(v -> navigateTo(NavTab.HOME));
     navProperty.setOnClickListener(v -> navigateTo(NavTab.PROPERTY));
     navService.setOnClickListener(v -> navigateTo(NavTab.SERVICE));
+    // Center button (profile) is a content tab in this build.
+    findViewById(R.id.nav_profile_center).setOnClickListener(v -> navigateTo(NavTab.PROFILE));
     navFinance.setOnClickListener(v -> navigateTo(NavTab.FINANCE));
     navCommunity.setOnClickListener(v -> navigateTo(NavTab.COMMUNITY));
     navMenu.setOnClickListener(
@@ -746,19 +749,12 @@ public class MainActivity extends AppCompatActivity {
           if (legalOpen) {
             hideLegalPage();
           }
+          // Keep native menu overlay behavior.
+          setActiveNavTab(NavTab.MENU);
           showMenu();
+          // Also bind to the base URL + /menu as requested.
+          loadOdooPath(NavUrls.MENU);
         });
-    findViewById(R.id.nav_profile_center)
-        .setOnClickListener(
-            v -> {
-              if (legalOpen) {
-                hideLegalPage();
-              }
-              hideMenu();
-              // Native profile screen is not yet implemented; keep as placeholder action.
-              // For now, reuse existing behavior (can be swapped to native screen later).
-              loadOdooPath(NavUrls.PROFILE);
-            });
     setActiveNavTab(NavTab.HOME);
   }
 
@@ -766,7 +762,10 @@ public class MainActivity extends AppCompatActivity {
     if (legalOpen) {
       hideLegalPage();
     }
-    hideMenu();
+    // Menu is an overlay; navigating elsewhere should close it.
+    if (tab != NavTab.MENU) {
+      hideMenu();
+    }
     setActiveNavTab(tab);
     switch (tab) {
       case HOME:
@@ -778,11 +777,18 @@ public class MainActivity extends AppCompatActivity {
       case SERVICE:
         loadOdooPath(NavUrls.SERVICE);
         break;
+      case PROFILE:
+        loadOdooPath(NavUrls.PROFILE);
+        break;
       case FINANCE:
         loadOdooPath(NavUrls.FINANCE);
         break;
       case COMMUNITY:
         loadOdooPath(NavUrls.COMMUNITY);
+        break;
+      case MENU:
+        showMenu();
+        loadOdooPath(NavUrls.MENU);
         break;
       default:
         break;
@@ -794,10 +800,11 @@ public class MainActivity extends AppCompatActivity {
     applyNavItemStyle(navHomeIconWrap, navHomeIcon, navHomeLabel, tab == NavTab.HOME);
     applyNavItemStyle(navPropertyIconWrap, navPropertyIcon, navPropertyLabel, tab == NavTab.PROPERTY);
     applyNavItemStyle(navServiceIconWrap, navServiceIcon, navServiceLabel, tab == NavTab.SERVICE);
+    // Center FAB does not use label/iconWrap styling here; keep its visual constant.
     applyNavItemStyle(navFinanceIconWrap, navFinanceLari, navFinanceLabel, tab == NavTab.FINANCE);
     applyNavItemStyle(
         navCommunityIconWrap, navCommunityIcon, navCommunityLabel, tab == NavTab.COMMUNITY);
-    applyNavItemStyle(navMenuIconWrap, navMenuIcon, navMenuLabel, false);
+    applyNavItemStyle(navMenuIconWrap, navMenuIcon, navMenuLabel, tab == NavTab.MENU);
   }
 
   private void applyNavItemStyle(
@@ -832,9 +839,10 @@ public class MainActivity extends AppCompatActivity {
       menuBackdrop.setOnClickListener(v -> hideMenu());
     }
 
-    menuRoot.findViewById(R.id.menu_item_profile).setOnClickListener(v -> openMenuPath(NavUrls.PROFILE));
+    menuRoot.findViewById(R.id.menu_item_profile)
+        .setOnClickListener(v -> openMenuPath(NavUrls.PROFILE));
     menuRoot.findViewById(R.id.menu_item_news)
-        .setOnClickListener(v -> openMenuPath(NavUrls.NOTIFICATIONS));
+        .setOnClickListener(v -> openMenuPath(NavUrls.NEWS));
     menuRoot.findViewById(R.id.menu_item_offers)
         .setOnClickListener(v -> openMenuPath(NavUrls.SUGGESTION));
     menuRoot.findViewById(R.id.menu_item_how_it_works)

@@ -142,7 +142,7 @@
                     android:orientation="horizontal">
 
                     <ImageButton
-                        android:id="@+id/header_phone_btn"
+                        android:id="@+id/header_bell_btn"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:background="@android:color/transparent"
@@ -150,17 +150,6 @@
                         android:padding="6dp"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_header_phone" />
-
-                    <ImageButton
-                        android:id="@+id/header_bell_btn"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_marginStart="18dp"
-                        android:background="@android:color/transparent"
-                        android:contentDescription="@string/header_notifications"
-                        android:padding="6dp"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_header_bell" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

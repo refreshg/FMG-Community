@@ -1,19 +1,22 @@
 package ge.fmg.community;
 
-/** Odoo portal paths (English locale) relative to server base — compose with {@link #url}. */
+/** App paths relative to server base — compose with {@link #url}. */
 public final class NavUrls {
   private NavUrls() {}
 
-  public static final String HOME = "/en/my/home";
-  public static final String PROPERTY = "/en/my/home/property";
-  public static final String SERVICE = "/en/my/home/service";
-  public static final String FINANCE = "/en/my/home/finance";
-  public static final String COMMUNITY = "/en/my/home/community";
+  // Bottom navigation
+  public static final String HOME = "/mtavari";
+  public static final String PROPERTY = "/qoneba";
+  public static final String SERVICE = "/servisi";
+  public static final String PROFILE = "/profili";
+  public static final String FINANCE = "/finansebi";
+  public static final String COMMUNITY = "/community";
+  public static final String MENU = "/menu";
 
-  public static final String PROFILE = "/en/my/home/personal/info";
-  public static final String NOTIFICATIONS = "/en/my/home/notifications";
-  public static final String SUGGESTION = "/en/my/home/suggestion";
-  public static final String HOW_IT_WORKS = "/en/my/home/howtowork";
+  // Menu items
+  public static final String NEWS = "/news";
+  public static final String SUGGESTION = "/shetavazeba";
+  public static final String HOW_IT_WORKS = "/how";
 
   public static String url(String base, String path) {
     if (base == null || path == null || !path.startsWith("/")) {
