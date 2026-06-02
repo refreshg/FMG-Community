@@ -29,7 +29,7 @@
     <string name="onboarding_skip">გამოტოვება</string>
     <string name="onboarding_next">შემდეგი</string>
     <string name="onboarding_finish">გადადით აპლიკაციაში</string>
-    <string name="onboarding_slide1_title">გახსენი ტიკეტი</string>
+    <string name="onboarding_slide1_title">გახსენი ბილეთი</string>
     <string name="onboarding_slide1_body">აცნობე ნებისმიერი დაზიანების შესახებ — სადარბაზო, ლიფტი, ეზო. გადაიღე ფოტო და თვალი ადევნე სტატუსს.</string>
     <string name="onboarding_slide2_title">ნახე ბალანსი ერთი კლიკით</string>
     <string name="onboarding_slide2_body">ლიფტი, კომუნალური, საერთო საფასური — ყველა გადასახადი ერთ ადგილას. გადახდის ისტორიაც აქვე ჩანს.</string>

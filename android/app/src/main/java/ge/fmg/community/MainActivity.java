@@ -552,16 +552,23 @@ public class MainActivity extends AppCompatActivity {
 
     dotViews = new View[slides.length];
     onboardingDots.removeAllViews();
-    int dotSize = (int) (8 * getResources().getDisplayMetrics().density);
-    int dotMargin = (int) (6 * getResources().getDisplayMetrics().density);
+    float density = getResources().getDisplayMetrics().density;
+    int dotInactive = (int) (8 * density);
+    int dotActiveW = (int) (24 * density);
+    int dotActiveH = (int) (8 * density);
+    int dotMargin = (int) (6 * density);
     for (int i = 0; i < slides.length; i++) {
       View dot = new View(this);
+      boolean active = i == 0;
       LinearLayout.LayoutParams lp =
-          new LinearLayout.LayoutParams(dotSize, dotSize);
+          new LinearLayout.LayoutParams(
+              active ? dotActiveW : dotInactive, active ? dotActiveH : dotInactive);
       if (i > 0) {
         lp.setMarginStart(dotMargin);
       }
       dot.setLayoutParams(lp);
+      dot.setBackgroundResource(
+          active ? R.drawable.onboarding_dot_active : R.drawable.onboarding_dot_inactive);
       dotViews[i] = dot;
       onboardingDots.addView(dot);
     }
@@ -588,11 +595,21 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void updateOnboardingUi(int position) {
+    float density = getResources().getDisplayMetrics().density;
+    int dotInactive = (int) (8 * density);
+    int dotActiveW = (int) (24 * density);
+    int dotActiveH = (int) (8 * density);
     for (int i = 0; i < dotViews.length; i++) {
-      dotViews[i].setBackgroundResource(
-          i == position ? R.drawable.onboarding_dot_active : R.drawable.onboarding_dot_inactive);
+      boolean active = i == position;
+      View dot = dotViews[i];
+      LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) dot.getLayoutParams();
+      lp.width = active ? dotActiveW : dotInactive;
+      lp.height = active ? dotActiveH : dotInactive;
+      dot.setLayoutParams(lp);
+      dot.setBackgroundResource(
+          active ? R.drawable.onboarding_dot_active : R.drawable.onboarding_dot_inactive);
     }
-    onboardingSkip.setVisibility(position < 2 ? View.VISIBLE : View.GONE);
+    onboardingSkip.setVisibility(View.VISIBLE);
     onboardingNext.setText(
         position == 2 ? R.string.onboarding_finish : R.string.onboarding_next);
   }
