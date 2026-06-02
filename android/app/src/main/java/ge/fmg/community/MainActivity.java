@@ -353,6 +353,16 @@ public class MainActivity extends AppCompatActivity {
               v.setLayoutParams(lp);
             }
           }
+          // Match web reference: WebView content reserves space for the whole bottom bar
+          // (safe-tab) + safe-area inset.
+          if (webView != null) {
+            int safeTab = getResources().getDimensionPixelSize(R.dimen.bottom_nav_total_height);
+            int webBottom = safeTab + bottom;
+            if (webView.getPaddingBottom() != webBottom) {
+              webView.setPadding(0, 0, 0, webBottom);
+              webView.setClipToPadding(false);
+            }
+          }
           return insets;
         });
     ViewCompat.requestApplyInsets(bottomNavContainer);

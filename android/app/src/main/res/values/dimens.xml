@@ -14,27 +14,28 @@
     <!-- Increase safe tab height: 84dp -> 96dp -->
     <!-- Keep FAB protrusion inside bottom-nav area (no overlap clipping) -->
     <!-- Match reference screenshot scale -->
-    <dimen name="bottom_nav_bar_height">90dp</dimen>
-    <dimen name="bottom_nav_fab_protrusion">22dp</dimen>
-    <dimen name="bottom_nav_total_height">112dp</dimen>
-    <dimen name="bottom_nav_corner_radius">28dp</dimen>
-    <dimen name="bottom_nav_side_padding">6dp</dimen>
-    <!-- Leave room for icon + label inside 90dp bar -->
-    <dimen name="bottom_nav_top_padding">10dp</dimen>
-    <dimen name="bottom_nav_bottom_padding">12dp</dimen>
-    <dimen name="bottom_nav_side_gap_for_fab">32dp</dimen>
+    <dimen name="bottom_nav_bar_height">108dp</dimen>
+    <dimen name="bottom_nav_fab_protrusion">26dp</dimen>
+    <dimen name="bottom_nav_total_height">134dp</dimen>
+    <dimen name="bottom_nav_corner_radius">34dp</dimen>
+    <dimen name="bottom_nav_side_padding">7dp</dimen>
+    <!-- Scaled x1.2 from reference padding -->
+    <dimen name="bottom_nav_top_padding">17dp</dimen>
+    <dimen name="bottom_nav_bottom_padding">14dp</dimen>
+    <dimen name="bottom_nav_side_gap_for_fab">28dp</dimen>
     <dimen name="bottom_nav_horizontal_margin">0dp</dimen>
-    <dimen name="bottom_nav_floating_bottom_margin">10dp</dimen>
-    <dimen name="tab_max_width">58dp</dimen>
-    <dimen name="tab_icon_wrap_size">48dp</dimen>
-    <dimen name="tab_icon_size">28dp</dimen>
-    <dimen name="tab_label_size">8sp</dimen>
-    <dimen name="tab_gap">2dp</dimen>
+    <dimen name="bottom_nav_floating_bottom_margin">12dp</dimen>
+    <dimen name="tab_max_width">70dp</dimen>
+    <dimen name="tab_min_width">58dp</dimen>
+    <dimen name="tab_icon_wrap_size">52dp</dimen>
+    <dimen name="tab_icon_size">30dp</dimen>
+    <dimen name="tab_label_size">10sp</dimen>
+    <dimen name="tab_gap">5dp</dimen>
 
     <!-- Center FAB (match reference HTML/CSS) -->
-    <dimen name="bottom_nav_fab_size">58dp</dimen>
-    <dimen name="bottom_nav_fab_top_negative">-26dp</dimen>
-    <dimen name="bottom_nav_fab_border">4dp</dimen>
+    <dimen name="bottom_nav_fab_size">70dp</dimen>
+    <dimen name="bottom_nav_fab_top_negative">-31dp</dimen>
+    <dimen name="bottom_nav_fab_border">5dp</dimen>
     <dimen name="menu_card_radius">12dp</dimen>
     <dimen name="menu_card_height">56dp</dimen>
     <dimen name="menu_badge_size">32dp</dimen>
