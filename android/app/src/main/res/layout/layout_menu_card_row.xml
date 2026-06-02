@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/menu_card_height"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_menu_card"
+    android:elevation="2dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp">
+
+    <FrameLayout
+        android:id="@+id/menu_row_badge"
+        android:layout_width="@dimen/menu_badge_size"
+        android:layout_height="@dimen/menu_badge_size"
+        android:background="@drawable/bg_menu_badge_gray">
+
+        <ImageView
+            android:id="@+id/menu_row_icon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_gravity="center"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/menu_row_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:contentDescription="@null"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_menu_chevron"
+        app:tint="@color/text_muted"
+        xmlns:app="http://schemas.android.com/apk/res-auto" />
+</LinearLayout>

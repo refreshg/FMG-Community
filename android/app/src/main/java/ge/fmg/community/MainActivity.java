@@ -23,6 +23,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,14 +51,13 @@ import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-  private static final int NAV_INACTIVE = Color.parseColor("#888888");
-  private static final int NAV_ACTIVE = Color.parseColor("#E63946");
-  private enum NavTab { BALANCE, TICKET, CREATE, OBJECTS, PROFILE }
+  private enum NavTab { HOME, PROPERTY, SERVICE, FINANCE, COMMUNITY, MENU }
 
   private AppPrefs prefs;
   private String odooBase;
   private String cachedUserDisplayName;
-  private NavTab activeNavTab = NavTab.BALANCE;
+  private NavTab activeNavTab = NavTab.HOME;
+  private NavTab lastContentTab = NavTab.HOME;
 
   private View onboardingScreen;
   private ViewPager2 onboardingPager;
@@ -75,23 +75,34 @@ public class MainActivity extends AppCompatActivity {
   private View bottomNavContainer;
 
   private View headerContainer;
-  private View navBalance;
-  private View navTicket;
-  private View navObjects;
-  private View navProfile;
-  private ImageView navBalanceIcon;
-  private ImageView navTicketIcon;
-  private ImageView navObjectsIcon;
-  private ImageView navProfileIcon;
-  private TextView navBalanceLabel;
-  private TextView navTicketLabel;
-  private TextView navObjectsLabel;
-  private TextView navProfileLabel;
+  private View navHome;
+  private View navProperty;
+  private View navService;
+  private View navFinance;
+  private View navCommunity;
+  private View navMenu;
+  private FrameLayout navHomeIconWrap;
+  private FrameLayout navPropertyIconWrap;
+  private FrameLayout navServiceIconWrap;
+  private FrameLayout navFinanceIconWrap;
+  private FrameLayout navCommunityIconWrap;
+  private FrameLayout navMenuIconWrap;
+  private ImageView navHomeIcon;
+  private ImageView navPropertyIcon;
+  private ImageView navServiceIcon;
+  private ImageView navFinanceIcon;
+  private ImageView navCommunityIcon;
+  private ImageView navMenuIcon;
+  private TextView navHomeLabel;
+  private TextView navPropertyLabel;
+  private TextView navServiceLabel;
+  private TextView navFinanceLabel;
+  private TextView navCommunityLabel;
+  private TextView navMenuLabel;
 
   private View menuOverlay;
   private View menuBackdrop;
   private View menuPanel;
-  private TextView menuProfileSubname;
   private View menuServerEditor;
   private EditText menuServerInput;
   private boolean menuOpen;
@@ -236,25 +247,36 @@ public class MainActivity extends AppCompatActivity {
     bottomNavContainer = findViewById(R.id.bottom_nav_container);
 
     headerContainer = findViewById(R.id.header_container);
-    navBalance = findViewById(R.id.nav_balance);
-    navTicket = findViewById(R.id.nav_ticket);
-    navObjects = findViewById(R.id.nav_objects);
-    navProfile = findViewById(R.id.nav_profile);
-    navBalanceIcon = findViewById(R.id.nav_balance_icon);
-    navTicketIcon = findViewById(R.id.nav_ticket_icon);
-    navObjectsIcon = findViewById(R.id.nav_objects_icon);
-    navProfileIcon = findViewById(R.id.nav_profile_icon);
-    navBalanceLabel = findViewById(R.id.nav_balance_label);
-    navTicketLabel = findViewById(R.id.nav_ticket_label);
-    navObjectsLabel = findViewById(R.id.nav_objects_label);
-    navProfileLabel = findViewById(R.id.nav_profile_label);
+    navHome = findViewById(R.id.nav_home);
+    navProperty = findViewById(R.id.nav_property);
+    navService = findViewById(R.id.nav_service);
+    navFinance = findViewById(R.id.nav_finance);
+    navCommunity = findViewById(R.id.nav_community);
+    navMenu = findViewById(R.id.nav_menu);
+    navHomeIconWrap = findViewById(R.id.nav_home_icon_wrap);
+    navPropertyIconWrap = findViewById(R.id.nav_property_icon_wrap);
+    navServiceIconWrap = findViewById(R.id.nav_service_icon_wrap);
+    navFinanceIconWrap = findViewById(R.id.nav_finance_icon_wrap);
+    navCommunityIconWrap = findViewById(R.id.nav_community_icon_wrap);
+    navMenuIconWrap = findViewById(R.id.nav_menu_icon_wrap);
+    navHomeIcon = findViewById(R.id.nav_home_icon);
+    navPropertyIcon = findViewById(R.id.nav_property_icon);
+    navServiceIcon = findViewById(R.id.nav_service_icon);
+    navFinanceIcon = findViewById(R.id.nav_finance_icon);
+    navCommunityIcon = findViewById(R.id.nav_community_icon);
+    navMenuIcon = findViewById(R.id.nav_menu_icon);
+    navHomeLabel = findViewById(R.id.nav_home_label);
+    navPropertyLabel = findViewById(R.id.nav_property_label);
+    navServiceLabel = findViewById(R.id.nav_service_label);
+    navFinanceLabel = findViewById(R.id.nav_finance_label);
+    navCommunityLabel = findViewById(R.id.nav_community_label);
+    navMenuLabel = findViewById(R.id.nav_menu_label);
 
     View menuRoot = findViewById(R.id.menu_overlay);
     menuOverlay = menuRoot;
     if (menuRoot != null) {
       menuBackdrop = menuRoot.findViewById(R.id.menu_backdrop);
       menuPanel = menuRoot.findViewById(R.id.menu_panel);
-      menuProfileSubname = menuRoot.findViewById(R.id.menu_profile_subname);
       menuServerEditor = menuRoot.findViewById(R.id.menu_server_editor);
       menuServerInput = menuRoot.findViewById(R.id.menu_server_input);
     }
@@ -270,11 +292,19 @@ public class MainActivity extends AppCompatActivity {
 
   private void configureSystemBars() {
     getWindow().setStatusBarColor(Color.TRANSPARENT);
+    applySystemBarAppearance(false);
+  }
+
+  private void applySystemBarAppearance(boolean mainChrome) {
     WindowInsetsControllerCompat controller =
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
     if (controller != null) {
-      controller.setAppearanceLightStatusBars(true);
+      controller.setAppearanceLightStatusBars(!mainChrome);
     }
+    getWindow()
+        .setNavigationBarColor(
+            ContextCompat.getColor(
+                this, mainChrome ? R.color.background_gray : R.color.surface));
   }
 
   private void applyHeaderInsets() {
@@ -549,6 +579,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showOnboarding() {
+    applySystemBarAppearance(false);
     hideLegalPage();
     webView.stopLoading();
     onboardingPager.setCurrentItem(0, false);
@@ -641,14 +672,22 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setupHeader() {
-    View homeIcon = findViewById(R.id.header_home_icon);
-    View homeTitle = findViewById(R.id.header_home_title);
     View.OnClickListener goHome = v -> navigateHeaderHome();
-    if (homeIcon != null) {
-      homeIcon.setOnClickListener(goHome);
+    View logoPill = findViewById(R.id.header_logo_pill);
+    View appTitle = findViewById(R.id.header_app_title);
+    if (logoPill != null) {
+      logoPill.setOnClickListener(goHome);
     }
-    if (homeTitle != null) {
-      homeTitle.setOnClickListener(goHome);
+    if (appTitle != null) {
+      appTitle.setOnClickListener(goHome);
+    }
+    View phoneBtn = findViewById(R.id.header_phone_btn);
+    View bellBtn = findViewById(R.id.header_bell_btn);
+    if (phoneBtn != null) {
+      phoneBtn.setOnClickListener(v -> {});
+    }
+    if (bellBtn != null) {
+      bellBtn.setOnClickListener(v -> {});
     }
   }
 
@@ -661,37 +700,54 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setupBottomNav() {
-    findViewById(R.id.nav_create).setOnClickListener(v -> navigateTo(NavTab.CREATE));
-    navBalance.setOnClickListener(v -> navigateTo(NavTab.BALANCE));
-    navTicket.setOnClickListener(v -> navigateTo(NavTab.TICKET));
-    navObjects.setOnClickListener(v -> navigateTo(NavTab.OBJECTS));
-    navProfile.setOnClickListener(v -> navigateTo(NavTab.PROFILE));
-    setActiveNavTab(NavTab.BALANCE);
+    navHome.setOnClickListener(v -> navigateTo(NavTab.HOME));
+    navProperty.setOnClickListener(v -> navigateTo(NavTab.PROPERTY));
+    navService.setOnClickListener(v -> navigateTo(NavTab.SERVICE));
+    navFinance.setOnClickListener(v -> navigateTo(NavTab.FINANCE));
+    navCommunity.setOnClickListener(v -> navigateTo(NavTab.COMMUNITY));
+    navMenu.setOnClickListener(v -> navigateTo(NavTab.MENU));
+    findViewById(R.id.nav_profile_center)
+        .setOnClickListener(
+            v -> {
+              if (legalOpen) {
+                hideLegalPage();
+              }
+              hideMenu();
+              loadOdooPath(NavUrls.PROFILE);
+            });
+    setActiveNavTab(NavTab.HOME);
   }
 
   private void navigateTo(NavTab tab) {
     if (legalOpen) {
       hideLegalPage();
     }
-    if (tab == NavTab.PROFILE) {
-      setActiveNavTab(NavTab.PROFILE);
+    if (tab == NavTab.MENU) {
+      if (activeNavTab != NavTab.MENU) {
+        lastContentTab = activeNavTab;
+      }
+      setActiveNavTab(NavTab.MENU);
       showMenu();
       return;
     }
     hideMenu();
+    lastContentTab = tab;
     setActiveNavTab(tab);
     switch (tab) {
-      case BALANCE:
-        loadOdooPath(NavUrls.BALANCE);
+      case HOME:
+        loadOdooPath(NavUrls.HOME);
         break;
-      case TICKET:
-        loadOdooPath(NavUrls.TICKETS);
+      case PROPERTY:
+        loadOdooPath(NavUrls.PROPERTY);
         break;
-      case CREATE:
-        loadOdooPath(NavUrls.CREATE_TICKET);
+      case SERVICE:
+        loadOdooPath(NavUrls.SERVICE);
         break;
-      case OBJECTS:
-        loadOdooPath(NavUrls.REAL_ESTATE);
+      case FINANCE:
+        loadOdooPath(NavUrls.FINANCE);
+        break;
+      case COMMUNITY:
+        loadOdooPath(NavUrls.COMMUNITY);
         break;
       default:
         break;
@@ -700,28 +756,56 @@ public class MainActivity extends AppCompatActivity {
 
   private void setActiveNavTab(NavTab tab) {
     activeNavTab = tab;
-    applyNavItemStyle(navBalanceIcon, navBalanceLabel, tab == NavTab.BALANCE);
-    applyNavItemStyle(navTicketIcon, navTicketLabel, tab == NavTab.TICKET);
-    applyNavItemStyle(navObjectsIcon, navObjectsLabel, tab == NavTab.OBJECTS);
-    applyNavItemStyle(navProfileIcon, navProfileLabel, tab == NavTab.PROFILE);
+    applyNavItemStyle(navHomeIconWrap, navHomeIcon, navHomeLabel, tab == NavTab.HOME);
+    applyNavItemStyle(navPropertyIconWrap, navPropertyIcon, navPropertyLabel, tab == NavTab.PROPERTY);
+    applyNavItemStyle(navServiceIconWrap, navServiceIcon, navServiceLabel, tab == NavTab.SERVICE);
+    applyNavItemStyle(navFinanceIconWrap, navFinanceIcon, navFinanceLabel, tab == NavTab.FINANCE);
+    applyNavItemStyle(
+        navCommunityIconWrap, navCommunityIcon, navCommunityLabel, tab == NavTab.COMMUNITY);
+    applyNavItemStyle(navMenuIconWrap, navMenuIcon, navMenuLabel, tab == NavTab.MENU);
   }
 
-  private void applyNavItemStyle(ImageView icon, TextView label, boolean active) {
-    int color = active ? NAV_ACTIVE : NAV_INACTIVE;
-    icon.setColorFilter(color);
-    label.setTextColor(color);
+  private void applyNavItemStyle(
+      FrameLayout iconWrap, ImageView icon, TextView label, boolean active) {
+    int iconColor =
+        ContextCompat.getColor(
+            this, active ? R.color.nav_icon_on_bar_active : R.color.nav_icon_on_bar);
+    int labelColor =
+        ContextCompat.getColor(
+            this, active ? R.color.nav_label_on_bar_active : R.color.nav_label_on_bar);
+    if (active) {
+      iconWrap.setBackgroundResource(R.drawable.bg_nav_active_circle);
+    } else {
+      iconWrap.setBackground(null);
+    }
+    icon.setColorFilter(iconColor);
+    label.setTextColor(labelColor);
   }
 
   private void setupMenu() {
     View menuRoot = menuOverlay != null ? menuOverlay : findViewById(R.id.menu_overlay);
     if (menuRoot == null) return;
 
-    bindMenuRow(menuRoot.findViewById(R.id.menu_item_news), R.drawable.ic_menu_news, R.string.menu_news);
-    bindMenuRow(menuRoot.findViewById(R.id.menu_item_offers), R.drawable.ic_menu_gift, R.string.menu_offers);
-    bindMenuRow(
+    bindMenuCardRow(
+        menuRoot.findViewById(R.id.menu_item_profile),
+        R.drawable.ic_menu_person,
+        R.string.menu_profile,
+        R.drawable.bg_menu_badge_gray);
+    bindMenuCardRow(
+        menuRoot.findViewById(R.id.menu_item_news),
+        R.drawable.ic_menu_news,
+        R.string.menu_news,
+        R.drawable.bg_menu_badge_blue);
+    bindMenuCardRow(
+        menuRoot.findViewById(R.id.menu_item_offers),
+        R.drawable.ic_menu_gift,
+        R.string.menu_offers,
+        R.drawable.bg_menu_badge_orange);
+    bindMenuCardRow(
         menuRoot.findViewById(R.id.menu_item_how_it_works),
         R.drawable.ic_menu_help,
-        R.string.menu_how_it_works);
+        R.string.menu_how_it_works,
+        R.drawable.bg_menu_badge_purple);
 
     if (menuBackdrop != null) {
       menuBackdrop.setOnClickListener(v -> hideMenu());
@@ -774,12 +858,20 @@ public class MainActivity extends AppCompatActivity {
     menuRoot.findViewById(R.id.menu_item_logout).setOnClickListener(v -> logout());
   }
 
-  private void bindMenuRow(View row, int iconRes, int labelRes) {
+  private void bindMenuCardRow(View row, int iconRes, int labelRes, int badgeBgRes) {
     if (row == null) return;
+    View badge = row.findViewById(R.id.menu_row_badge);
     ImageView icon = row.findViewById(R.id.menu_row_icon);
     TextView label = row.findViewById(R.id.menu_row_label);
-    if (icon != null) icon.setImageResource(iconRes);
-    if (label != null) label.setText(labelRes);
+    if (badge != null) {
+      badge.setBackgroundResource(badgeBgRes);
+    }
+    if (icon != null) {
+      icon.setImageResource(iconRes);
+    }
+    if (label != null) {
+      label.setText(labelRes);
+    }
   }
 
   private void openMenuPath(String path) {
@@ -853,9 +945,8 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void reloadCurrentNavView() {
-    if (activeNavTab == NavTab.PROFILE) {
-      setActiveNavTab(NavTab.BALANCE);
-      loadOdooPath(NavUrls.BALANCE);
+    if (activeNavTab == NavTab.MENU) {
+      navigateTo(lastContentTab);
       return;
     }
     navigateTo(activeNavTab);
@@ -866,7 +957,6 @@ public class MainActivity extends AppCompatActivity {
     if (legalOpen) {
       hideLegalPage();
     }
-    refreshMenuProfileName();
     menuServerEditor.setVisibility(View.GONE);
     menuServerInput.setText(odooBase);
     menuOverlay.setVisibility(View.VISIBLE);
@@ -893,8 +983,13 @@ public class MainActivity extends AppCompatActivity {
 
   private void hideMenu() {
     if (!menuOpen || menuAnimating) {
-      menuOverlay.setVisibility(View.GONE);
+      if (menuOverlay != null) {
+        menuOverlay.setVisibility(View.GONE);
+      }
       menuOpen = false;
+      if (activeNavTab == NavTab.MENU) {
+        setActiveNavTab(lastContentTab);
+      }
       return;
     }
     menuAnimating = true;
@@ -910,24 +1005,11 @@ public class MainActivity extends AppCompatActivity {
               menuOverlay.setVisibility(View.GONE);
               menuOpen = false;
               menuAnimating = false;
+              if (activeNavTab == NavTab.MENU) {
+                setActiveNavTab(lastContentTab);
+              }
             })
         .start();
-  }
-
-  private void refreshMenuProfileName() {
-    applyMenuProfileSubname(cachedUserDisplayName);
-    fetchProfileDisplayName();
-  }
-
-  private void applyMenuProfileSubname(String name) {
-    if (menuProfileSubname == null) return;
-    if (isValidDisplayName(name)) {
-      menuProfileSubname.setText(name.trim());
-      menuProfileSubname.setVisibility(View.VISIBLE);
-    } else {
-      menuProfileSubname.setText("");
-      menuProfileSubname.setVisibility(View.GONE);
-    }
   }
 
   private static boolean isValidDisplayName(String name) {
@@ -984,15 +1066,8 @@ public class MainActivity extends AppCompatActivity {
           String name = parseJsString(value);
           if (isValidDisplayName(name)) {
             cachedUserDisplayName = name;
-            if (menuOpen) {
-              runOnUiThread(() -> applyMenuProfileSubname(name));
-            }
           }
         });
-  }
-
-  private void fetchProfileDisplayName() {
-    updateCachedUserNameFromSession();
   }
 
   private static String parseJsString(String raw) {
@@ -1008,6 +1083,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showLogin() {
+    applySystemBarAppearance(false);
     hideLegalPage();
     hideMenu();
     onboardingScreen.setVisibility(View.GONE);
@@ -1027,10 +1103,12 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void showMain() {
+    applySystemBarAppearance(true);
     loginScreen.setVisibility(View.GONE);
     hideMenu();
     mainContainer.setVisibility(View.VISIBLE);
-    setActiveNavTab(NavTab.BALANCE);
+    setActiveNavTab(NavTab.HOME);
+    lastContentTab = NavTab.HOME;
   }
 
   private void loadOdooPath(String path) {

@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="brand_red">#E63946</color>
+    <color name="brand_primary">#0d958a</color>
+    <color name="brand_primary_pressed">#0a7a71</color>
+    <color name="header_bg">#14323d</color>
     <color name="brand_black">#1a1a1a</color>
-    <!-- Legacy name kept for existing layouts; maps to brand red -->
     <color name="brand_purple">#E63946</color>
     <color name="text_primary">#1a1a1a</color>
+    <color name="text_muted">#888888</color>
     <color name="text_secondary">#666666</color>
     <color name="text_body">#444444</color>
+    <color name="nav_icon_inactive">#555555</color>
     <color name="divider">#E6E6E6</color>
     <color name="header_border">#e5e5e5</color>
     <color name="surface">#FFFFFF</color>
-    <color name="background">#FFFFFF</color>
-    <color name="nav_bar_bg">#0e0e10</color>
-    <color name="nav_inactive">#888888</color>
+    <color name="background_gray">#f5f7f9</color>
+    <color name="background">#f5f7f9</color>
+    <color name="nav_bar_bg">#14323d</color>
+    <color name="nav_icon_on_bar">#E6FFFFFF</color>
+    <color name="nav_icon_on_bar_active">#FFFFFFFF</color>
+    <color name="nav_label_on_bar">#E6FFFFFF</color>
+    <color name="nav_label_on_bar_active">#FFFFFFFF</color>
+    <color name="nav_inactive">#999999</color>
+    <color name="nav_active">#0d958a</color>
     <color name="login_input_bg">#fafafa</color>
     <color name="login_input_border">#e0e0e0</color>
     <color name="login_footer">#aaaaaa</color>
     <color name="brand_red_pressed">#c92a37</color>
-    <color name="nav_active">#E63946</color>
-    <color name="action_green">#E63946</color>
+    <color name="logout_red">#e63946</color>
+    <color name="action_green">#0d958a</color>
+    <color name="header_icon_btn_bg">#33FFFFFF</color>
+    <color name="menu_badge_gray">#eeeeee</color>
+    <color name="menu_badge_blue">#e3f2fd</color>
+    <color name="menu_badge_orange">#fff3e0</color>
+    <color name="menu_badge_purple">#f3e5f5</color>
+    <color name="menu_badge_yellow">#fffde7</color>
 </resources>

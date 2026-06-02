@@ -1,164 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_nav_container"
     android:layout_width="match_parent"
     android:layout_height="@dimen/bottom_nav_total_height"
     android:clipChildren="false"
     android:clipToPadding="false">
 
-    <View
+    <!-- Floating dark pill bar with side margins -->
+    <FrameLayout
+        android:id="@+id/bottom_nav_bar_card"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_nav_bar_height"
         android:layout_gravity="bottom"
-        android:background="@color/nav_bar_bg" />
-
-    <LinearLayout
-        android:id="@+id/bottom_nav_bar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_nav_bar_height"
-        android:layout_gravity="bottom"
-        android:background="@color/nav_bar_bg"
-        android:baselineAligned="false"
+        android:layout_marginStart="@dimen/bottom_nav_horizontal_margin"
+        android:layout_marginEnd="@dimen/bottom_nav_horizontal_margin"
+        android:background="@drawable/bg_bottom_nav_bar"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:gravity="bottom"
-        android:orientation="horizontal"
-        android:paddingTop="6dp">
+        android:elevation="12dp">
 
+        <!-- 7 equal slots: 3 tabs | spacer | 3 tabs -->
         <LinearLayout
-            android:id="@+id/nav_balance"
-            android:layout_width="0dp"
+            android:id="@+id/bottom_nav_bar"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingBottom="8dp">
-
-            <ImageView
-                android:id="@+id/nav_balance_icon"
-                android:layout_width="@dimen/nav_icon_size"
-                android:layout_height="@dimen/nav_icon_size"
-                android:contentDescription="@string/nav_balance"
-                android:src="@drawable/ic_nav_wallet"
-                app:tint="@color/nav_inactive" />
-
-            <TextView
-                android:id="@+id/nav_balance_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="@string/nav_balance"
-                android:textColor="@color/nav_inactive"
-                android:textSize="@dimen/nav_label_size" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/nav_ticket"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingBottom="8dp">
-
-            <ImageView
-                android:id="@+id/nav_ticket_icon"
-                android:layout_width="@dimen/nav_icon_size"
-                android:layout_height="@dimen/nav_icon_size"
-                android:contentDescription="@string/nav_ticket"
-                android:src="@drawable/ic_nav_ticket"
-                app:tint="@color/nav_inactive" />
-
-            <TextView
-                android:id="@+id/nav_ticket_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="@string/nav_ticket"
-                android:textColor="@color/nav_inactive"
-                android:textSize="@dimen/nav_label_size" />
-        </LinearLayout>
-
-        <!-- Center slot: FAB sits above the bar -->
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:baselineAligned="false"
             android:clipChildren="false"
-            android:clipToPadding="false">
+            android:clipToPadding="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="12dp">
 
-            <ImageButton
-                android:id="@+id/nav_create"
-                android:layout_width="@dimen/bottom_nav_fab_size"
-                android:layout_height="@dimen/bottom_nav_fab_size"
-                android:layout_gravity="center_horizontal|top"
-                android:layout_marginTop="-8dp"
-                android:background="@drawable/bg_nav_fab"
-                android:contentDescription="ახალი ტიკეტი"
-                android:elevation="8dp"
-                android:padding="14dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/ic_nav_plus"
-                app:tint="@android:color/white" />
-        </FrameLayout>
+            <LinearLayout
+                android:id="@+id/nav_home"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/nav_objects"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingBottom="8dp">
+                <FrameLayout
+                    android:id="@+id/nav_home_icon_wrap"
+                    android:layout_width="@dimen/nav_icon_wrap_size"
+                    android:layout_height="@dimen/nav_icon_wrap_size">
 
-            <ImageView
-                android:id="@+id/nav_objects_icon"
-                android:layout_width="@dimen/nav_icon_size"
-                android:layout_height="@dimen/nav_icon_size"
-                android:contentDescription="@string/nav_objects"
-                android:src="@drawable/ic_nav_building"
-                app:tint="@color/nav_inactive" />
+                    <ImageView
+                        android:id="@+id/nav_home_icon"
+                        android:layout_width="@dimen/nav_icon_size"
+                        android:layout_height="@dimen/nav_icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/nav_home"
+                        android:src="@drawable/ic_nav_grid" />
+                </FrameLayout>
 
-            <TextView
-                android:id="@+id/nav_objects_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="@string/nav_objects"
-                android:textColor="@color/nav_inactive"
+                <TextView
+                    android:id="@+id/nav_home_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/nav_icon_label_gap"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/nav_home"
+                android:textColor="@color/nav_label_on_bar"
                 android:textSize="@dimen/nav_label_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_property"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/nav_property_icon_wrap"
+                    android:layout_width="@dimen/nav_icon_wrap_size"
+                    android:layout_height="@dimen/nav_icon_wrap_size">
+
+                    <ImageView
+                        android:id="@+id/nav_property_icon"
+                        android:layout_width="@dimen/nav_icon_size"
+                        android:layout_height="@dimen/nav_icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/nav_property"
+                        android:src="@drawable/ic_nav_property" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/nav_property_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/nav_icon_label_gap"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/nav_property"
+                android:textColor="@color/nav_label_on_bar"
+                android:textSize="@dimen/nav_label_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_service"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/nav_service_icon_wrap"
+                    android:layout_width="@dimen/nav_icon_wrap_size"
+                    android:layout_height="@dimen/nav_icon_wrap_size">
+
+                    <ImageView
+                        android:id="@+id/nav_service_icon"
+                        android:layout_width="@dimen/nav_icon_size"
+                        android:layout_height="@dimen/nav_icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/nav_service"
+                        android:src="@drawable/ic_nav_service" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/nav_service_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/nav_icon_label_gap"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/nav_service"
+                android:textColor="@color/nav_label_on_bar"
+                android:textSize="@dimen/nav_label_size" />
+            </LinearLayout>
+
+            <!-- Center slot spacer (FAB overlays here, perfectly centered on bar) -->
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/nav_finance"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/nav_finance_icon_wrap"
+                    android:layout_width="@dimen/nav_icon_wrap_size"
+                    android:layout_height="@dimen/nav_icon_wrap_size">
+
+                    <ImageView
+                        android:id="@+id/nav_finance_icon"
+                        android:layout_width="@dimen/nav_icon_size"
+                        android:layout_height="@dimen/nav_icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/nav_finance"
+                        android:src="@drawable/ic_nav_finance" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/nav_finance_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/nav_icon_label_gap"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/nav_finance"
+                android:textColor="@color/nav_label_on_bar"
+                android:textSize="@dimen/nav_label_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_community"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/nav_community_icon_wrap"
+                    android:layout_width="@dimen/nav_icon_wrap_size"
+                    android:layout_height="@dimen/nav_icon_wrap_size">
+
+                    <ImageView
+                        android:id="@+id/nav_community_icon"
+                        android:layout_width="@dimen/nav_icon_size"
+                        android:layout_height="@dimen/nav_icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/nav_community"
+                        android:src="@drawable/ic_nav_community" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/nav_community_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/nav_icon_label_gap"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/nav_community"
+                android:textColor="@color/nav_label_on_bar"
+                android:textSize="@dimen/nav_label_size" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/nav_menu"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/nav_menu_icon_wrap"
+                    android:layout_width="@dimen/nav_icon_wrap_size"
+                    android:layout_height="@dimen/nav_icon_wrap_size">
+
+                    <ImageView
+                        android:id="@+id/nav_menu_icon"
+                        android:layout_width="@dimen/nav_icon_size"
+                        android:layout_height="@dimen/nav_icon_size"
+                        android:layout_gravity="center"
+                        android:contentDescription="@string/nav_menu"
+                        android:src="@drawable/ic_nav_menu" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/nav_menu_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/nav_icon_label_gap"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:text="@string/nav_menu"
+                android:textColor="@color/nav_label_on_bar"
+                android:textSize="@dimen/nav_label_size" />
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/nav_profile"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingBottom="8dp">
-
-            <ImageView
-                android:id="@+id/nav_profile_icon"
-                android:layout_width="@dimen/nav_icon_size"
-                android:layout_height="@dimen/nav_icon_size"
-                android:contentDescription="@string/nav_profile"
-                android:src="@drawable/ic_nav_person"
-                app:tint="@color/nav_inactive" />
-
-            <TextView
-                android:id="@+id/nav_profile_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="@string/nav_profile"
-                android:textColor="@color/nav_inactive"
-                android:textSize="@dimen/nav_label_size" />
-        </LinearLayout>
-    </LinearLayout>
+        <!-- Center FAB: anchored to horizontal center of the bar, raised above top edge -->
+        <ImageButton
+            android:id="@+id/nav_profile_center"
+            android:layout_width="@dimen/bottom_nav_fab_size"
+            android:layout_height="@dimen/bottom_nav_fab_size"
+            android:layout_gravity="center_horizontal|top"
+            android:background="@drawable/bg_nav_fab"
+            android:contentDescription="@string/nav_profile_center"
+            android:elevation="14dp"
+            android:padding="15dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_nav_person_white"
+            android:translationZ="4dp"
+            android:translationY="@dimen/bottom_nav_fab_lift_negative" />
+    </FrameLayout>
 </FrameLayout>

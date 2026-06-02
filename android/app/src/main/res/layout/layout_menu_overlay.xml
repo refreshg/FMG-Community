@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/menu_overlay_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +10,7 @@
         android:id="@+id/menu_backdrop"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#99000000"
+        android:background="#4D000000"
         android:clickable="true"
         android:focusable="true" />
 
@@ -26,12 +27,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="24dp"
+            android:paddingHorizontal="20dp"
             android:paddingTop="20dp"
-            android:paddingBottom="12dp"
+            android:paddingBottom="14dp"
             android:text="@string/menu_title"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <ScrollView
@@ -39,154 +40,98 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:clipToPadding="false"
             android:fillViewport="true"
             android:overScrollMode="ifContentScrolls"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="24dp"
             android:scrollbars="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="20dp">
+                android:orientation="vertical">
 
-                <!-- 1. პროფილი -->
-                <LinearLayout
+                <include
                     android:id="@+id/menu_item_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_menu_row"
-                    android:gravity="center_vertical"
-                    android:minHeight="56dp"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="20dp"
-                    android:paddingVertical="10dp">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_person" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/menu_profile"
-                            android:textColor="@android:color/white"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/menu_profile_subname"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:textColor="#AAAAAA"
-                            android:textSize="13sp"
-                            android:visibility="gone" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_chevron" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="#33FFFFFF" />
+                    layout="@layout/layout_menu_card_row" />
 
                 <include
                     android:id="@+id/menu_item_news"
-                    layout="@layout/layout_menu_row" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="#33FFFFFF" />
+                    layout="@layout/layout_menu_card_row" />
 
                 <include
                     android:id="@+id/menu_item_offers"
-                    layout="@layout/layout_menu_row" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="#33FFFFFF" />
+                    layout="@layout/layout_menu_card_row" />
 
                 <include
                     android:id="@+id/menu_item_how_it_works"
-                    layout="@layout/layout_menu_row" />
+                    layout="@layout/layout_menu_card_row" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="#33FFFFFF" />
-
-                <!-- სერვერის ლინკი -->
                 <LinearLayout
                     android:id="@+id/menu_item_server"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_menu_row"
+                    android:layout_height="@dimen/menu_card_height"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_menu_card"
+                    android:elevation="2dp"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center_vertical"
-                    android:minHeight="52dp"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="20dp"
-                    android:paddingVertical="10dp">
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
 
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_globe" />
+                    <FrameLayout
+                        android:layout_width="@dimen/menu_badge_size"
+                        android:layout_height="@dimen/menu_badge_size"
+                        android:background="@drawable/bg_menu_badge_gray">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_menu_link" />
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="@string/menu_server"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp" />
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp" />
 
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_chevron" />
+                        android:src="@drawable/ic_menu_chevron"
+                        app:tint="@color/text_muted" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/menu_server_editor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_menu_card"
+                    android:elevation="2dp"
                     android:orientation="vertical"
-                    android:paddingHorizontal="20dp"
-                    android:paddingBottom="12dp"
+                    android:padding="14dp"
                     android:visibility="gone">
 
                     <EditText
                         android:id="@+id/menu_server_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="#1AFFFFFF"
-                        android:hint="https://example.odoo.com"
+                        android:background="@drawable/bg_login_input"
+                        android:hint="@string/login_server_hint"
                         android:inputType="textUri"
                         android:padding="12dp"
-                        android:textColor="@android:color/white"
-                        android:textColorHint="#888888"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_muted"
                         android:textSize="14sp" />
 
                     <Button
@@ -194,132 +139,140 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:backgroundTint="@color/brand_red"
+                        android:backgroundTint="@color/brand_primary"
                         android:text="@string/menu_save"
                         android:textAllCaps="false"
                         android:textColor="@android:color/white" />
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="#33FFFFFF" />
-
                 <LinearLayout
                     android:id="@+id/menu_item_privacy"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_menu_row"
+                    android:layout_height="@dimen/menu_card_height"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_menu_card"
+                    android:elevation="2dp"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center_vertical"
-                    android:minHeight="52dp"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="20dp"
-                    android:paddingVertical="10dp">
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
 
-                    <ImageView
-                        android:id="@+id/menu_privacy_icon"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_privacy" />
+                    <FrameLayout
+                        android:layout_width="@dimen/menu_badge_size"
+                        android:layout_height="@dimen/menu_badge_size"
+                        android:background="@drawable/bg_menu_badge_yellow">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_menu_privacy" />
+                    </FrameLayout>
 
                     <TextView
-                        android:id="@+id/menu_privacy_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="@string/menu_privacy"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp" />
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp" />
 
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_chevron" />
+                        android:src="@drawable/ic_menu_chevron"
+                        app:tint="@color/text_muted" />
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="#33FFFFFF" />
 
                 <LinearLayout
                     android:id="@+id/menu_item_terms"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_menu_row"
+                    android:layout_height="@dimen/menu_card_height"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_menu_card"
+                    android:elevation="2dp"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center_vertical"
-                    android:minHeight="52dp"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="20dp"
-                    android:paddingVertical="10dp">
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
 
-                    <ImageView
-                        android:id="@+id/menu_terms_icon"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_terms" />
+                    <FrameLayout
+                        android:layout_width="@dimen/menu_badge_size"
+                        android:layout_height="@dimen/menu_badge_size"
+                        android:background="@drawable/bg_menu_badge_gray">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_menu_terms" />
+                    </FrameLayout>
 
                     <TextView
-                        android:id="@+id/menu_terms_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="@string/menu_terms"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp" />
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp" />
 
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_chevron" />
+                        android:src="@drawable/ic_menu_chevron"
+                        app:tint="@color/text_muted" />
                 </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="20dp"
-                    android:background="#33FFFFFF" />
-
-                <!-- გასვლა -->
                 <LinearLayout
                     android:id="@+id/menu_item_logout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_menu_row"
+                    android:layout_height="@dimen/menu_card_height"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/bg_menu_card"
+                    android:elevation="2dp"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center_vertical"
-                    android:minHeight="52dp"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="20dp"
-                    android:paddingVertical="10dp">
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp">
 
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_logout" />
+                    <FrameLayout
+                        android:layout_width="@dimen/menu_badge_size"
+                        android:layout_height="@dimen/menu_badge_size"
+                        android:background="#1Ae63946">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@null"
+                            android:src="@drawable/ic_menu_logout"
+                            app:tint="@color/logout_red" />
+                    </FrameLayout>
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:text="@string/menu_logout"
-                        android:textColor="#FF6B6B"
-                        android:textSize="16sp" />
+                        android:textColor="@color/logout_red"
+                        android:textSize="15sp" />
 
                     <ImageView
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:contentDescription="@null"
-                        android:src="@drawable/ic_menu_chevron" />
+                        android:src="@drawable/ic_menu_chevron"
+                        app:tint="@color/text_muted" />
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

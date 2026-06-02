@@ -5,6 +5,8 @@
     android:id="@+id/root_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context=".MainActivity">
 
     <include
@@ -21,13 +23,15 @@
         android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:visibility="gone">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/surface"
+            android:background="@color/header_bg"
             android:clipToPadding="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,36 +49,56 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
-                    android:id="@+id/header_home_icon"
-                    android:layout_width="@dimen/header_home_icon_size"
-                    android:layout_height="@dimen/header_home_icon_size"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/header_logo_home"
-                    android:importantForAccessibility="yes"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_header_home" />
+                <FrameLayout
+                    android:id="@+id/header_logo_pill"
+                    android:layout_width="@dimen/header_logo_pill_width"
+                    android:layout_height="@dimen/header_logo_pill_height"
+                    android:background="@drawable/bg_logo_pill"
+                    android:foreground="?android:attr/selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/header_logo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/header_logo_height"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/header_logo_content_desc"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/fmg_logo" />
+                </FrameLayout>
 
                 <TextView
-                    android:id="@+id/header_home_title"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/header_app_title"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/header_home_gap"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:layout_marginStart="@dimen/header_title_gap"
+                    android:layout_weight="1"
                     android:fontFamily="sans-serif-medium"
-                    android:text="@string/header_home_title"
-                    android:textColor="@color/brand_black"
-                    android:textSize="16sp" />
-            </LinearLayout>
+                    android:text="@string/header_app_title"
+                    android:textColor="@android:color/white"
+                    android:textSize="17sp" />
 
-            <View
-                android:id="@+id/header_divider"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:background="@color/header_border"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/header_bar" />
+                <ImageButton
+                    android:id="@+id/header_phone_btn"
+                    android:layout_width="@dimen/header_action_btn_size"
+                    android:layout_height="@dimen/header_action_btn_size"
+                    android:background="@drawable/bg_header_icon_btn"
+                    android:contentDescription="@string/header_phone"
+                    android:padding="9dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_header_phone" />
+
+                <ImageButton
+                    android:id="@+id/header_bell_btn"
+                    android:layout_width="@dimen/header_action_btn_size"
+                    android:layout_height="@dimen/header_action_btn_size"
+                    android:layout_marginStart="@dimen/header_action_gap"
+                    android:background="@drawable/bg_header_icon_btn"
+                    android:contentDescription="@string/header_notifications"
+                    android:padding="9dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_header_bell" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include
@@ -90,6 +114,7 @@
             android:id="@+id/webview_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="@color/background_gray"
             android:clipChildren="true"
             android:clipToPadding="true"
             app:layout_constraintBottom_toTopOf="@id/bottom_nav"

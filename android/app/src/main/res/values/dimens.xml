@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="header_content_height">48dp</dimen>
+    <dimen name="header_content_height">64dp</dimen>
     <dimen name="header_horizontal_padding">16dp</dimen>
-    <dimen name="header_home_icon_size">22dp</dimen>
-    <dimen name="header_home_gap">8dp</dimen>
-    <dimen name="bottom_nav_bar_height">64dp</dimen>
+    <dimen name="header_logo_pill_width">52dp</dimen>
+    <dimen name="header_logo_pill_height">36dp</dimen>
+    <dimen name="header_logo_pill_radius">8dp</dimen>
+    <dimen name="header_logo_height">32dp</dimen>
+    <dimen name="header_title_gap">10dp</dimen>
+    <dimen name="header_action_btn_size">40dp</dimen>
+    <dimen name="header_action_icon_size">22dp</dimen>
+    <dimen name="header_action_gap">8dp</dimen>
+    <dimen name="bottom_nav_horizontal_margin">12dp</dimen>
+    <dimen name="bottom_nav_corner_radius">20dp</dimen>
+    <dimen name="bottom_nav_bar_height">80dp</dimen>
     <dimen name="bottom_nav_fab_size">58dp</dimen>
-    <dimen name="bottom_nav_fab_overlap">26dp</dimen>
-    <dimen name="bottom_nav_total_height">90dp</dimen>
-    <dimen name="nav_icon_size">22dp</dimen>
+    <dimen name="bottom_nav_fab_lift">14dp</dimen>
+    <dimen name="bottom_nav_fab_lift_negative">-14dp</dimen>
+    <dimen name="bottom_nav_fab_overlap">29dp</dimen>
+    <dimen name="bottom_nav_total_height">94dp</dimen>
+    <dimen name="nav_icon_size">24dp</dimen>
+    <dimen name="nav_icon_wrap_size">40dp</dimen>
     <dimen name="nav_label_size">11sp</dimen>
+    <dimen name="nav_icon_label_gap">4dp</dimen>
+    <dimen name="menu_card_radius">12dp</dimen>
+    <dimen name="menu_card_height">56dp</dimen>
+    <dimen name="menu_badge_size">32dp</dimen>
     <dimen name="login_top_spacing">60dp</dimen>
     <dimen name="login_logo_width">180dp</dimen>
     <dimen name="login_after_logo_spacing">24dp</dimen>
