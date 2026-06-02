@@ -3,7 +3,12 @@
   "appName": "FMG Community",
   "webDir": "www",
   "server": {
-    "androidScheme": "https"
+    "androidScheme": "https",
+    "allowNavigation": [
+      "*.odoo.com",
+      "*.dev.odoo.com",
+      "fmggeo-araa-19679928.dev.odoo.com"
+    ]
   },
   "plugins": {
     "SplashScreen": {

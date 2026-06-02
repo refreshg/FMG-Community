@@ -10,129 +10,153 @@
   <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
-  <!-- Native server entry screen (server only; Odoo handles credentials in WebView) -->
+  <!-- SVG icon sprite (matches Android vector drawables) -->
+  <object data="assets/icons.svg" type="image/svg+xml" aria-hidden="true" class="icon-sprite"></object>
+
+  <!-- Server entry screen -->
   <div id="login-screen" class="login-screen">
-    <div class="login-card">
-      <img src="assets/fmg_logo.png" alt="FMG Soft" class="login-logo" />
+    <div class="login-scroll">
+      <div class="login-logo-mark" aria-label="FMG Soft">
+        <span class="logo-letters"><span>F</span><span class="logo-m">M</span><span>G</span></span>
+        <span class="logo-soft">SOFT</span>
+      </div>
       <h1 class="login-title">FMG Community</h1>
       <p class="login-subtitle">შეიყვანე სერვერის მისამართი</p>
 
       <label class="field">
         <span class="field-label">სერვერი</span>
-        <input id="login-server" class="field-input" type="text" inputmode="url" autocapitalize="none" autocomplete="off" />
+        <input id="login-server" class="field-input" type="text" inputmode="url" autocapitalize="none" autocomplete="off" placeholder="https://example.odoo.com" />
       </label>
 
-      <button id="login-btn" class="btn-primary login-btn">შესვლა</button>
+      <button id="login-btn" class="btn-primary login-btn" type="button">შესვლა</button>
+      <p class="login-footer">© FMG Soft 2026</p>
     </div>
   </div>
 
-  <!-- Onboarding (shown on first launch only) -->
+  <!-- Onboarding (first launch) -->
   <div id="onboarding" class="onboarding hidden">
     <div class="onboarding-slide">
       <div class="ob-icon">🎫</div>
-      <h2>გახსენი ტიკეტი</h2>
-      <p>აცნობე მართვას ნებისმიერი დაზიანების შესახებ — სადარბაზო, ლიფტი, ეზო.</p>
+      <h2>გახსენი ბილეთი</h2>
+      <p>აცნობე ნებისმიერი დაზიანების შესახებ — სადარბაზო, ლიფტი, ეზო.</p>
     </div>
-    <button id="ob-next" class="btn-primary">გაგრძელება</button>
+    <button id="ob-next" class="btn-primary" type="button">გაგრძელება</button>
   </div>
 
-  <!-- App header -->
-  <header id="app-header" class="app-header">
-    <span id="header-title">ტიკეტები</span>
-    <button id="reload-btn" class="reload-btn" aria-label="განახლება">↻</button>
+  <!-- Dark teal header (matches Android activity_main.xml) -->
+  <header id="app-header" class="app-header hidden">
+    <div class="app-topbar">
+      <div class="app-topbar-brand">
+        <button type="button" class="app-topbar-logo-mark" id="header-logo-pill">
+          <span class="logo-letters"><span>F</span><span class="logo-m">M</span><span>G</span></span>
+          <span class="logo-soft">SOFT</span>
+        </button>
+        <span class="app-topbar-title">Community APP</span>
+      </div>
+      <button id="header-phone-btn" class="header-phone-btn" type="button" aria-label="დარეკვა">
+        <svg class="nav-svg" aria-hidden="true"><use href="assets/icons.svg#icon-phone"></use></svg>
+      </button>
+    </div>
   </header>
 
-  <!-- WebView container (Odoo content lives here) -->
-  <main id="content">
-    <div id="loader" class="loader">
+  <!-- WebView container (Odoo content in native WebView behind shell) -->
+  <main id="content" class="hidden">
+    <div id="loader" class="loader hidden">
       <div class="spinner"></div>
       <p>იტვირთება...</p>
     </div>
     <div id="offline" class="offline hidden">
       <div class="offline-icon">📡</div>
       <p>ინტერნეტი არ არის</p>
-      <button id="retry-btn" class="btn-primary">სცადე ხელახლა</button>
+      <button id="retry-btn" class="btn-primary" type="button">სცადე ხელახლა</button>
     </div>
-    <!--
-      NOTE: Odoo cannot be loaded inside a cross-origin iframe (X-Frame-Options/CSP).
-      On Android/iOS we mount a native WebView behind this shell instead.
-    -->
     <div id="webview" class="webview native-webview-host" aria-hidden="true"></div>
   </main>
 
-  <!-- Native bottom tab bar -->
-  <nav id="tabbar" class="tabbar">
-    <button class="tab active" data-key="tickets" data-title="ტიკეტები">
-      <span class="tab-icon">🎫</span>
-      <span class="tab-label">ტიკეტები</span>
-    </button>
-    <button class="tab" data-key="balance" data-title="ბალანსი">
-      <span class="tab-icon">💳</span>
-      <span class="tab-label">ბალანსი</span>
-    </button>
-    <button class="tab" data-key="notifications" data-title="შეტყობინებები">
-      <span class="tab-icon">🔔</span>
-      <span class="tab-label">შეტყობ.</span>
-    </button>
-    <button class="tab" data-key="profile" data-title="პროფილი">
-      <span class="tab-icon">👤</span>
-      <span class="tab-label">პროფილი</span>
-    </button>
+  <!-- Dark teal bottom nav — 7 tabs (matches Android layout_bottom_nav.xml) -->
+  <nav id="tabbar" class="tabbar hidden">
+    <div class="bottom-nav-wrap">
+      <div class="bottom-nav-bar">
+        <div class="tabs-side tabs-left">
+          <button class="tab active" type="button" data-key="home" data-path="/mtavari">
+            <span class="tab-icon-wrap"><svg class="nav-svg"><use href="assets/icons.svg#icon-grid"></use></svg></span>
+            <span class="tab-label">მთავარი</span>
+          </button>
+          <button class="tab" type="button" data-key="property" data-path="/qoneba">
+            <span class="tab-icon-wrap"><svg class="nav-svg"><use href="assets/icons.svg#icon-building"></use></svg></span>
+            <span class="tab-label">ქონება</span>
+          </button>
+          <button class="tab" type="button" data-key="service" data-path="/servisi">
+            <span class="tab-icon-wrap"><svg class="nav-svg"><use href="assets/icons.svg#icon-wrench"></use></svg></span>
+            <span class="tab-label">სერვისი</span>
+          </button>
+        </div>
+        <div class="tabs-side tabs-right">
+          <button class="tab" type="button" data-key="finance" data-path="/finansebi">
+            <span class="tab-icon-wrap tab-lari-wrap"><span class="tab-lari">₾</span></span>
+            <span class="tab-label">ფინანსები</span>
+          </button>
+          <button class="tab" type="button" data-key="community" data-path="/community">
+            <span class="tab-icon-wrap"><svg class="nav-svg"><use href="assets/icons.svg#icon-folder"></use></svg></span>
+            <span class="tab-label">Community</span>
+          </button>
+          <button class="tab" type="button" data-key="menu" data-path="/menu">
+            <span class="tab-icon-wrap"><svg class="nav-svg"><use href="assets/icons.svg#icon-menu"></use></svg></span>
+            <span class="tab-label">მენიუ</span>
+          </button>
+        </div>
+        <button class="tab-fab" type="button" data-key="profile" data-path="/profili" aria-label="პროფილი">
+          <svg class="nav-svg nav-svg-fab"><use href="assets/icons.svg#icon-person"></use></svg>
+        </button>
+      </div>
+    </div>
   </nav>
 
-  <!-- Native Profile screen (not a WebView) -->
-  <div id="profile-screen" class="profile-screen hidden">
-    <div class="profile-card">
-      <div class="profile-avatar">👤</div>
-      <div id="profile-name" class="profile-name">მომხმარებელი</div>
-    </div>
-
-    <div class="settings-group">
-      <div class="settings-row">
-        <span>შეტყობინებები</span>
-        <label class="switch">
-          <input type="checkbox" id="toggle-push" checked />
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="settings-row">
-        <span>ბიომეტრიული დაცვა</span>
-        <label class="switch">
-          <input type="checkbox" id="toggle-bio" />
-          <span class="slider"></span>
-        </label>
-      </div>
-    </div>
-
-    <div class="settings-group">
-      <div class="settings-row link" id="about-row">
-        <span>აპის შესახებ</span><span class="chevron">›</span>
-      </div>
-      <div class="settings-row link" id="change-server-row">
-        <span>სერვერის შეცვლა</span><span class="chevron">›</span>
-      </div>
-      <div class="settings-row link" id="privacy-row">
-        <span>კონფიდენციალურობის პოლიტიკა</span><span class="chevron">›</span>
-      </div>
-      <div class="settings-row link" id="terms-row">
-        <span>წესები და პირობები</span><span class="chevron">›</span>
+  <!-- Menu overlay (matches Android layout_menu_overlay.xml) -->
+  <div id="menu-overlay" class="menu-overlay hidden">
+    <div id="menu-backdrop" class="menu-backdrop"></div>
+    <div id="menu-panel" class="menu-panel">
+      <h2 class="menu-title">მენიუ</h2>
+      <div class="menu-list">
+        <button type="button" class="menu-row" id="menu-item-profile" data-path="/profili">
+          <span class="menu-badge">👤</span><span class="menu-label">პროფილი</span><span class="menu-chevron">›</span>
+        </button>
+        <button type="button" class="menu-row" id="menu-item-news" data-path="/news">
+          <span class="menu-badge">📰</span><span class="menu-label">სიახლეები</span><span class="menu-chevron">›</span>
+        </button>
+        <button type="button" class="menu-row" id="menu-item-offers" data-path="/shetavazeba">
+          <span class="menu-badge">🎁</span><span class="menu-label">შეთავაზებები</span><span class="menu-chevron">›</span>
+        </button>
+        <button type="button" class="menu-row" id="menu-item-how" data-path="/how">
+          <span class="menu-badge">❓</span><span class="menu-label">როგორ მუშაობს?</span><span class="menu-chevron">›</span>
+        </button>
+        <button type="button" class="menu-row" id="menu-item-server">
+          <span class="menu-badge">🔗</span><span class="menu-label">სერვისის ლინკი</span><span class="menu-chevron">›</span>
+        </button>
+        <div id="menu-server-editor" class="menu-server-editor hidden">
+          <input id="menu-server-input" class="field-input" type="text" inputmode="url" autocapitalize="none" autocomplete="off" placeholder="https://example.odoo.com" />
+          <button id="menu-server-save" class="btn-primary menu-save-btn" type="button">შენახვა</button>
+        </div>
+        <button type="button" class="menu-row" id="menu-item-privacy" data-legal="privacy">
+          <span class="menu-badge">🔒</span><span class="menu-label">კონფიდენციალურობა</span><span class="menu-chevron">›</span>
+        </button>
+        <button type="button" class="menu-row" id="menu-item-terms" data-legal="terms">
+          <span class="menu-badge">📄</span><span class="menu-label">წესები და პირობები</span><span class="menu-chevron">›</span>
+        </button>
+        <button type="button" class="menu-row menu-row-logout" id="menu-item-logout">
+          <span class="menu-badge">🚪</span><span class="menu-label">გამოსვლა</span><span class="menu-chevron">›</span>
+        </button>
       </div>
     </div>
-
-    <button id="logout-btn" class="btn-logout">გასვლა</button>
-
-    <div class="app-version">ვერსია <span id="app-version">1.0.0</span></div>
   </div>
 
-  <!-- About modal (native static screen) -->
-  <div id="about-modal" class="modal hidden">
-    <div class="modal-content">
-      <h2>FMG Community</h2>
-      <p>სამეზობლოს მართვის აპლიკაცია — ტიკეტები, ბალანსი და გადასახადები ერთ ადგილას.</p>
-      <p class="muted">© 2026 FMG Community. ყველა უფლება დაცულია.</p>
-      <p class="muted">support@fmg.ge</p>
-      <button id="about-close" class="btn-primary">დახურვა</button>
+  <!-- Legal document overlay -->
+  <div id="legal-overlay" class="legal-overlay hidden">
+    <div class="legal-header">
+      <button id="legal-close" class="legal-close" type="button" aria-label="დახურვა">←</button>
+      <span id="legal-title" class="legal-title"></span>
     </div>
+    <iframe id="legal-frame" class="legal-frame" title="Legal document"></iframe>
   </div>
 
   <script src="capacitor.js"></script>
