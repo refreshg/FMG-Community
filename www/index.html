@@ -33,14 +33,20 @@
     </div>
   </div>
 
-  <!-- Onboarding (first launch) -->
+  <!-- Onboarding — 3 slides (matches Android strings.xml) -->
   <div id="onboarding" class="onboarding hidden">
-    <div class="onboarding-slide">
-      <div class="ob-icon">🎫</div>
-      <h2>გახსენი ბილეთი</h2>
-      <p>აცნობე ნებისმიერი დაზიანების შესახებ — სადარბაზო, ლიფტი, ეზო.</p>
+    <button id="ob-skip" class="ob-skip" type="button">გამოტოვება</button>
+    <div class="ob-slide-wrap">
+      <div id="ob-icon" class="ob-icon" aria-hidden="true">🎫</div>
+      <h2 id="ob-title" class="ob-title">გახსენი ბილეთი</h2>
+      <p id="ob-body" class="ob-body">აცნობე ნებისმიერი დაზიანების შესახებ — სადარბაზო, ლიფტი, ეზო. გადაიღე ფოტო და თვალი ადევნე სტატუსს.</p>
     </div>
-    <button id="ob-next" class="btn-primary" type="button">გაგრძელება</button>
+    <div id="ob-dots" class="ob-dots" aria-hidden="true">
+      <span class="ob-dot active"></span>
+      <span class="ob-dot"></span>
+      <span class="ob-dot"></span>
+    </div>
+    <button id="ob-next" class="btn-primary ob-next" type="button">შემდეგი</button>
   </div>
 
   <!-- Dark teal header (matches Android activity_main.xml) -->

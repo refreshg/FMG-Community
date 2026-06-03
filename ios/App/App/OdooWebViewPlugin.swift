@@ -10,7 +10,15 @@ public class OdooWebViewPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "initialize", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setVisible", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "loadUrl", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "reload", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "reload", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setTabBarTouchEnabled", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "showMenuOverlay", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "hideMenuOverlay", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setLoginTouchEnabled", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "showLegalOverlay", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "hideLegalOverlay", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setOnboardingTouchEnabled", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "dialSupportPhone", returnType: CAPPluginReturnPromise)
     ]
 
     private var odooWebView: WKWebView?
@@ -59,20 +67,25 @@ public class OdooWebViewPlugin: CAPPlugin, CAPBridgedPlugin {
         containerView.clipsToBounds = true
         containerView.addSubview(webView)
 
-        if let shell = shellWebView() {
-            parent.insertSubview(containerView, belowSubview: shell)
-        } else {
-            parent.insertSubview(containerView, at: 0)
-        }
-
+        parent.addSubview(containerView)
         odooWebView = webView
         container = containerView
+        applyWebViewZOrder()
         layoutWebView()
     }
 
-    private func layoutWebView() {
-        guard let parent = parentView(), let container = container, let webView = odooWebView else { return }
+    /// Odoo must render above the transparent shell so portal pages are visible (not a white shell layer).
+    private func applyWebViewZOrder() {
+        guard let parent = parentView(), let container = container else { return }
+        if let shell = shellWebView() {
+            parent.insertSubview(container, aboveSubview: shell)
+        } else {
+            parent.bringSubviewToFront(container)
+        }
+        (bridge?.viewController as? BridgeViewController)?.applyChromeZOrder()
+    }
 
+    func contentAreaFrame(in parent: UIView) -> CGRect {
         parent.layoutIfNeeded()
         let safeTop = parent.safeAreaInsets.top
         let safeBottom = parent.safeAreaInsets.bottom
@@ -80,9 +93,30 @@ public class OdooWebViewPlugin: CAPPlugin, CAPBridgedPlugin {
         let bottom = tabbarPx + safeBottom
         let width = parent.bounds.width
         let height = max(0, parent.bounds.height - top - bottom)
+        return CGRect(x: 0, y: top, width: width, height: height)
+    }
 
-        container.frame = CGRect(x: 0, y: top, width: width, height: height)
+    /// Full height below header (covers tab bar) — matches Android menu overlay.
+    func menuOverlayFrame(in parent: UIView) -> CGRect {
+        parent.layoutIfNeeded()
+        let safeTop = parent.safeAreaInsets.top
+        let top = headerPx + safeTop
+        let width = parent.bounds.width
+        let height = max(0, parent.bounds.height - top)
+        return CGRect(x: 0, y: top, width: width, height: height)
+    }
+
+    func odooContainerView() -> UIView? {
+        container
+    }
+
+    private func layoutWebView() {
+        guard let parent = parentView(), let container = container, let webView = odooWebView else { return }
+        let frame = contentAreaFrame(in: parent)
+        container.frame = frame
         webView.frame = container.bounds
+        applyWebViewZOrder()
+        (bridge?.viewController as? BridgeViewController)?.relayoutNativeMenuOverlay()
     }
 
     @objc func initialize(_ call: CAPPluginCall) {
@@ -122,6 +156,67 @@ public class OdooWebViewPlugin: CAPPlugin, CAPBridgedPlugin {
     @objc func reload(_ call: CAPPluginCall) {
         DispatchQueue.main.async {
             self.odooWebView?.reload()
+            call.resolve()
+        }
+    }
+
+    @objc func setTabBarTouchEnabled(_ call: CAPPluginCall) {
+        let enabled = call.getBool("enabled") ?? true
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? BridgeViewController)?.setTabTouchLayerEnabled(enabled)
+            call.resolve()
+        }
+    }
+
+    @objc func showMenuOverlay(_ call: CAPPluginCall) {
+        let serverUrl = call.getString("serverUrl") ?? ""
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? BridgeViewController)?.showNativeMenu(serverUrl: serverUrl)
+            call.resolve()
+        }
+    }
+
+    @objc func hideMenuOverlay(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? BridgeViewController)?.hideNativeMenu(animated: true)
+            call.resolve()
+        }
+    }
+
+    @objc func setLoginTouchEnabled(_ call: CAPPluginCall) {
+        let enabled = call.getBool("enabled") ?? false
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? BridgeViewController)?.setLoginTouchLayerEnabled(enabled)
+            call.resolve()
+        }
+    }
+
+    @objc func showLegalOverlay(_ call: CAPPluginCall) {
+        let which = call.getString("which") ?? "privacy"
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? BridgeViewController)?.showNativeLegal(which: which)
+            call.resolve()
+        }
+    }
+
+    @objc func hideLegalOverlay(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? BridgeViewController)?.hideNativeLegal()
+            call.resolve()
+        }
+    }
+
+    @objc func setOnboardingTouchEnabled(_ call: CAPPluginCall) {
+        let enabled = call.getBool("enabled") ?? false
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? BridgeViewController)?.setOnboardingTouchLayerEnabled(enabled)
+            call.resolve()
+        }
+    }
+
+    @objc func dialSupportPhone(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            (self.bridge?.viewController as? BridgeViewController)?.dialSupportPhone()
             call.resolve()
         }
     }

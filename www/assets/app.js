@@ -28,6 +28,163 @@ const ROUTES = {
 const HEADER_HEIGHT_PX = 70;
 const TABBAR_HEIGHT_PX = 134;
 
+const NAV_PATH_BY_KEY = {
+  home: ROUTES.HOME,
+  property: ROUTES.PROPERTY,
+  service: ROUTES.SERVICE,
+  profile: ROUTES.PROFILE,
+  finance: ROUTES.FINANCE,
+  community: ROUTES.COMMUNITY,
+  menu: ROUTES.MENU,
+};
+
+/** Called from iOS NativeTabBarTouchLayer (UIKit hit targets above WKWebView). */
+window.__fmgNav = {
+  menu() {
+    return openMenuTab();
+  },
+  tab(key) {
+    const path = NAV_PATH_BY_KEY[key];
+    if (!path) return Promise.resolve();
+    if (key === "menu") return openMenuTab();
+    return navigateTo(key, path);
+  },
+};
+
+async function setNativeTabBarEnabled(enabled) {
+  const odoo = getOdooWebViewPlugin();
+  if (odoo?.setTabBarTouchEnabled) {
+    await odoo.setTabBarTouchEnabled({ enabled });
+  }
+}
+
+async function setNativeLoginTouchEnabled(enabled) {
+  const odoo = getOdooWebViewPlugin();
+  if (odoo?.setLoginTouchEnabled) {
+    await odoo.setLoginTouchEnabled({ enabled });
+  }
+}
+
+async function setNativeOnboardingTouchEnabled(enabled) {
+  const odoo = getOdooWebViewPlugin();
+  if (odoo?.setOnboardingTouchEnabled) {
+    await odoo.setOnboardingTouchEnabled({ enabled });
+  }
+}
+
+/** Called from iOS NativeLoginTouchLayer */
+window.__fmgLogin = {
+  submit() {
+    return submitLogin();
+  },
+};
+
+window.__fmgOnboarding = {
+  goTo(index) {
+    onboardingIndex = index;
+    renderOnboardingSlide();
+  },
+  next() {
+    return onboardingNext();
+  },
+  skip() {
+    return completeOnboarding();
+  },
+  continue() {
+    return onboardingNext();
+  },
+};
+
+window.__fmgLegal = {
+  closed() {
+    legalOpen = false;
+  },
+};
+
+function useNativeMenuOverlay() {
+  return (
+    window.Capacitor?.getPlatform?.() === "ios" &&
+    typeof getOdooWebViewPlugin()?.showMenuOverlay === "function"
+  );
+}
+
+function useNativeLegalOverlay() {
+  return (
+    window.Capacitor?.getPlatform?.() === "ios" &&
+    typeof getOdooWebViewPlugin()?.showLegalOverlay === "function"
+  );
+}
+
+/** Menu row actions from iOS NativeMenuOverlayView */
+window.__fmgMenuAction = function (action, payload) {
+  switch (action) {
+    case "closed":
+      menuOpen = false;
+      return;
+    case "profile":
+      openMenuPath(ROUTES.PROFILE);
+      return;
+    case "news":
+      openMenuPath(ROUTES.NEWS);
+      return;
+    case "offers":
+      openMenuPath(ROUTES.SUGGESTION);
+      return;
+    case "how":
+      openMenuPath(ROUTES.HOW_IT_WORKS);
+      return;
+    case "privacy":
+      showLegalPage("privacy").catch(console.error);
+      return;
+    case "terms":
+      showLegalPage("terms").catch(console.error);
+      return;
+    case "logout":
+      logout().catch(console.error);
+      return;
+    case "server-save": {
+      const normalized = normalizeServer(payload || "");
+      if (!normalized) {
+        toast("სერვერის მისამართი არასწორია");
+        return;
+      }
+      (async () => {
+        ODOO_BASE = normalized;
+        await prefSet(PREF_SERVER_KEY, ODOO_BASE);
+        const loginInput = $("login-server");
+        if (loginInput) loginInput.value = ODOO_BASE;
+        await hideMenu();
+        setActiveNav("home");
+        await loadOdooPath(ROUTES.HOME);
+      })().catch(console.error);
+      return;
+    }
+    default:
+      break;
+  }
+};
+
+const SUPPORT_PHONE = "0322470600";
+
+const ONBOARDING_SLIDES = [
+  {
+    icon: "🎫",
+    title: "გახსენი ბილეთი",
+    body: "აცნობე ნებისმიერი დაზიანების შესახებ — სადარბაზო, ლიფტი, ეზო. გადაიღე ფოტო და თვალი ადევნე სტატუსს.",
+  },
+  {
+    icon: "💰",
+    title: "ნახე ბალანსი ერთი კლიკით",
+    body: "ლიფტი, კომუნალური, საერთო საფასური — ყველა გადასახადი ერთ ადგილას. გადახდის ისტორიაც აქვე ჩანს.",
+  },
+  {
+    icon: "🔔",
+    title: "შეტყობინებები რომ არ გამოგრჩეს",
+    body: "ახალი ცნობები, ტიკეტის სტატუსი, გადასახადის შეხსენებები — ყველაფერი პირდაპირ ტელეფონზე.",
+  },
+];
+
+let onboardingIndex = 0;
 let ODOO_BASE = DEFAULT_SERVER;
 let activeNavKey = "home";
 let menuOpen = false;
@@ -196,10 +353,17 @@ async function navigateTo(key, path) {
   await loadOdooPath(path);
 }
 
-function showMenu() {
-  const overlay = $("menu-overlay");
-  if (!overlay || menuOpen) return;
+async function showMenu() {
+  if (menuOpen) return;
   hideLegalPage();
+  if (useNativeMenuOverlay()) {
+    menuOpen = true;
+    const odoo = getOdooWebViewPlugin();
+    await odoo.showMenuOverlay({ serverUrl: ODOO_BASE });
+    return;
+  }
+  const overlay = $("menu-overlay");
+  if (!overlay) return;
   hide($("menu-server-editor"));
   const input = $("menu-server-input");
   if (input) input.value = ODOO_BASE;
@@ -208,7 +372,14 @@ function showMenu() {
   menuOpen = true;
 }
 
-function hideMenu() {
+async function hideMenu() {
+  if (useNativeMenuOverlay()) {
+    if (!menuOpen) return;
+    menuOpen = false;
+    const odoo = getOdooWebViewPlugin();
+    await odoo.hideMenuOverlay();
+    return;
+  }
   const overlay = $("menu-overlay");
   if (!overlay || !menuOpen) {
     overlay?.classList.add("hidden");
@@ -225,73 +396,100 @@ function hideMenu() {
 
 async function openMenuTab() {
   setActiveNav("menu");
-  showMenu();
+  await showMenu();
   await loadOdooPath(ROUTES.MENU);
 }
 
 function openMenuPath(path) {
-  hideMenu();
   const key = path === ROUTES.PROFILE ? "profile" : activeNavKey;
-  navigateTo(key, path).catch(console.error);
+  hideMenu()
+    .then(() => navigateTo(key, path))
+    .catch(console.error);
 }
 
-function showLegalPage(which) {
+async function showLegalPage(which) {
+  await hideMenu();
   const overlay = $("legal-overlay");
   const frame = $("legal-frame");
   const title = $("legal-title");
-  if (!overlay || !frame || !title) return;
 
-  hideMenu();
+  legalOpen = true;
+
+  if (useNativeLegalOverlay()) {
+    const odoo = getOdooWebViewPlugin();
+    await odoo.showLegalOverlay({ which });
+    return;
+  }
+
+  if (!overlay || !frame || !title) return;
   const isTerms = which === "terms";
   title.textContent = isTerms ? "წესები და პირობები" : "კონფიდენციალურობის პოლიტიკა";
   frame.src = new URL(isTerms ? LEGAL.TERMS : LEGAL.PRIVACY, window.location.href).href;
   overlay.classList.remove("hidden");
-  legalOpen = true;
 }
 
-function hideLegalPage() {
+async function hideLegalPage() {
+  if (!legalOpen) return;
+  legalOpen = false;
+
+  if (useNativeLegalOverlay()) {
+    const odoo = getOdooWebViewPlugin();
+    await odoo.hideLegalOverlay();
+    return;
+  }
+
   const overlay = $("legal-overlay");
   const frame = $("legal-frame");
-  if (!legalOpen) return;
   overlay?.classList.add("hidden");
   if (frame) frame.src = "about:blank";
-  legalOpen = false;
 }
 
 async function logout() {
-  hideMenu();
+  await hideMenu();
+  await hideLegalPage();
   await loadOdooPath(ROUTES.LOGOUT);
   await prefSet(PREF_LOGGED_IN_KEY, "false");
   await prefSet(PREF_ONBOARDING_KEY, "false");
   const odoo = getOdooWebViewPlugin();
   if (odoo) await odoo.setVisible({ visible: false });
-  showOnboarding();
+  await showOnboarding();
 }
 
-function showLoginScreen() {
+async function showLoginScreen() {
+  setNativeTabBarEnabled(false);
   hide($("onboarding"));
   hide($("app-header"));
   hide($("content"));
   hide($("tabbar"));
+  hideMenu();
   show($("login-screen"));
   const odoo = getOdooWebViewPlugin();
   if (odoo) odoo.setVisible({ visible: false }).catch(() => {});
+  await setNativeLoginTouchEnabled(true);
 }
 
-function showOnboarding() {
+async function showOnboarding() {
+  setNativeTabBarEnabled(false);
+  await setNativeLoginTouchEnabled(false);
   hide($("login-screen"));
   hide($("app-header"));
   hide($("content"));
   hide($("tabbar"));
+  hideMenu();
+  resetOnboardingSlides();
+  await setNativeOnboardingTouchEnabled(true);
   show($("onboarding"));
 }
 
 async function showMainShell() {
+  await setNativeLoginTouchEnabled(false);
+  await setNativeOnboardingTouchEnabled(false);
   hide($("login-screen"));
   hide($("onboarding"));
   show($("app-header"));
   show($("content"));
   show($("tabbar"));
+  await setNativeTabBarEnabled(true);
 }
 
 async function submitLogin() {
@@ -314,7 +512,7 @@ async function submitLogin() {
 
 async function completeOnboarding() {
   await prefSet(PREF_ONBOARDING_KEY, "true");
-  showLoginScreen();
+  await showLoginScreen();
   const saved = await prefGet(PREF_SERVER_KEY);
   const input = $("login-server");
   if (input) input.value = saved || DEFAULT_SERVER;
@@ -322,8 +520,14 @@ async function completeOnboarding() {
 
 async function routeStartup() {
   ODOO_BASE = (await prefGet(PREF_SERVER_KEY)) || DEFAULT_SERVER;
-  const loggedIn = (await prefGet(PREF_LOGGED_IN_KEY)) === "true";
-  const onboardingSeen = (await prefGet(PREF_ONBOARDING_KEY)) === "true";
+  let loggedIn = (await prefGet(PREF_LOGGED_IN_KEY)) === "true";
+  let onboardingSeen = (await prefGet(PREF_ONBOARDING_KEY)) === "true";
+
+  // Match Android MainActivity: stale onboardingSeen without loggedIn
+  if (!loggedIn && onboardingSeen) {
+    await prefSet(PREF_ONBOARDING_KEY, "false");
+    onboardingSeen = false;
+  }
 
   const loginInput = $("login-server");
   if (loginInput) loginInput.value = ODOO_BASE;
@@ -337,12 +541,14 @@ async function routeStartup() {
   }
 
   if (!loggedIn && !onboardingSeen) {
-    showOnboarding();
+    await showOnboarding();
     return;
   }
 
-  showLoginScreen();
+  await showLoginScreen();
 }
+
+window.submitLogin = submitLogin;
 
 function setupLoginUi() {
   bindTap($("login-btn"), () => {
@@ -365,18 +571,72 @@ function setupLoginUi() {
 }
 
 function setupOnboardingUi() {
-  bindTap($("ob-next"), () => {
+  bindTap($("ob-skip"), () => {
     completeOnboarding().catch((err) => console.error("onboarding failed", err));
   });
+  bindTap($("ob-next"), () => {
+    onboardingNext().catch((err) => console.error("onboarding failed", err));
+  });
+}
+
+function dialSupportPhone() {
+  const odoo = window.Capacitor?.Plugins?.OdooWebView;
+  if (odoo?.dialSupportPhone) {
+    odoo.dialSupportPhone().catch(() => {
+      window.location.href = `tel:${SUPPORT_PHONE}`;
+    });
+    return;
+  }
+  window.location.href = `tel:${SUPPORT_PHONE}`;
+}
+
+function renderOnboardingSlide() {
+  const slide = ONBOARDING_SLIDES[onboardingIndex];
+  if (!slide) return;
+
+  const icon = $("ob-icon");
+  const title = $("ob-title");
+  const body = $("ob-body");
+  const nextBtn = $("ob-next");
+  const dots = $("ob-dots")?.querySelectorAll(".ob-dot");
+
+  if (icon) icon.textContent = slide.icon;
+  if (title) title.textContent = slide.title;
+  if (body) body.textContent = slide.body;
+  if (nextBtn) {
+    nextBtn.textContent =
+      onboardingIndex === ONBOARDING_SLIDES.length - 1
+        ? "გადადით აპლიკაციაში"
+        : "შემდეგი";
+  }
+  dots?.forEach((dot, i) => {
+    dot.classList.toggle("active", i === onboardingIndex);
+  });
+}
+
+function resetOnboardingSlides() {
+  onboardingIndex = 0;
+  renderOnboardingSlide();
+}
+
+window.renderOnboardingSlide = renderOnboardingSlide;
+window.onboardingNext = onboardingNext;
+window.completeOnboarding = completeOnboarding;
+
+function onboardingNext() {
+  if (onboardingIndex < ONBOARDING_SLIDES.length - 1) {
+    onboardingIndex += 1;
+    renderOnboardingSlide();
+    return Promise.resolve();
+  }
+  return completeOnboarding();
 }
 
 function setupHeaderUi() {
   bindTap($("header-logo-pill"), () => {
     navigateTo("home", ROUTES.HOME).catch(console.error);
   });
-  bindTap($("header-phone-btn"), () => {
-    window.location.href = "tel:0322470600";
-  });
+  bindTap($("header-phone-btn"), dialSupportPhone);
 }
 
 function handleNavButton(btn) {
